@@ -1,85 +1,93 @@
 ## Beta
 
 ## Objetivo
+
 Se presenta el Lenguaje "Beta"
 Es un lenguaje de programacion esoterico con tipado fuerte, de tipo estructurado,
 maneja expresiones, loops, condicionales y funciones
 
 ## Alcance
-Solo maneja numeros enteros, booleanos y cadenas de textos, 
+
+Solo maneja numeros reales, booleanos y cadenas de textos,
 Puede hacer operacioones logicas, arimeticas y de comparacion
 los condicionales manejan : if, else if, else
 funciones propias y funciones personalizadas
 puede ser recursivo
 
-
 ## Especificaciones Léxicas
 
-- **Identificadores**  
-  - Solo letras `[a-zA-Z]+`  
-  - Case sensitive (`Name` ≠ `name`)  
+- **Identificadores**
+
+  - Solo letras `(a-z | A-Z)+`
+  - Case sensitive (`Name` ≠ `name`)
 
 - **Palabras reservadas**  
-str, num, bool, func, return, if, else, loop, in, range, console,
-true, false, #start, #end
+  str, num, bool, func, return, if, else, loop, in, range, console,
+  true, false, #start, #end
 
-- **Números**  
-- Enteros con o sin signo: `10`, `-5`, `+3`  
-- No se permiten decimales  
+- **Números**
+- Reales con o sin signo: `10.0`, `-5`, `+3.558`
+- No se permiten decimales
 
-- **Cadenas (string)**  
-- `"..."` o `'...'`  
-- Admiten letras y espacios  
-- Ejemplo: `"Hola mundo"`  
+- **Cadenas (string)**
+- `"..."` o `'...'`
+- Admiten letras y espacios
+- Ejemplo: `"Hola mundo"`
 
-- **Operadores**  
-- Aritméticos: `+ - * / %`  
-- Lógicos: `& | !`  
-- Comparación: `< > <= >= == !=`  
-- Asignación: `:`  
+- **Operadores**
+- Aritméticos: `+ - * / %`
+- Lógicos: `& | !`
+- Comparación: `< > <= >= == !=`
+- Asignación: `:`
 
-- **Delimitadores**  
-- Paréntesis `()`, llaves `{}`, comas `,`  
+- **Delimitadores**
+- Paréntesis `()`, llaves `{}`, comas `,`
 
 ---
 
 ## Especificaciones Sintácticas
 
 - **Programa**  
-#start
-`<content>`
-#end
+  #start
+  `<content>`
+  #end
 
 - **Declaración de variable**  
-`<tipo> <id>: <exp>`
+  `<tipo> <id>: <exp>`
 
 - - Ejemplo:
+
 ```
 num x: 10
 ```
 
 - **Asignación**  
-`<id>: <exp>`
+  `<id>: <exp>`
 - - Ejemplo:
+
 ```
 x: 20
 ```
 
-- **Expresiones**  
-- Pueden ser literales, identificadores, operaciones o llamadas a funciones.  
+- **Expresiones**
+- Pueden ser literales, identificadores, operaciones o llamadas a funciones.
 - Ejemplos:
+
 ```
-1 + 2 
+1 + 2
 true & false
 "abc" / true
 ```
-- **Condicionales**  
+
+- **Condicionales**
+
 ```
 if (<expr>) { <content> }
 if (<expr>) { <content> } else { <content> }
 ```
 
 - - Ejemplo:
+
 ```
 if(x > 0) {
 console("positivo")
@@ -88,23 +96,27 @@ console("negativo")
 }
 ```
 
-- **Bucles**  
+- **Bucles**
+
 ```
 loop(i in range(0, 5)) { console(i) }
 ```
 
-
 - **Funciones**  
-Con o sin retorno:
+  Con o sin retorno:
+
 ```
 func f(num a, num b: 5) { <content> }
 
 func g(str x): num { return 1 }
 ```
-- **Llamada a función**  
+
+- **Llamada a función**
+
 ```
-`f(10, 20)`
+f(10, 20)
 ```
+
 ---
 
 # BNF
@@ -113,9 +125,10 @@ func g(str x): num { return 1 }
 <prog>::= #start <content> #end
 <content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | λ
 <content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func>
-<content_return>::= <function_return> | <console>  | <exp> | <call_func> | <primitive> | <id>
+<content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id>
 <console>::= console(<args>)
- 
+<error>::= error(<string>)
+
 <function>::= func <id> (<param>) { <content> }
 <function_return>::= func <id> (<param>) : <type> { <content> return <content_return> }
 <param>::= <type> <id>,  <param> | <var>, <param> | <type> <id> | <var>
@@ -127,12 +140,12 @@ func g(str x): num { return 1 }
 <loop>::= loop ( <id> in <range>) { <content> }
 <range>:: = range(<number>, <number>) | range(<number>)
 
-<exp>::= 
-    <content_return> <operator> <content_return> | 
-    <content_return> <operator> <exp> | 
-    <content_return> | 
-    <op_bool_un> <content_return> <operator> <content_return> | 
-    <op_bool_un> <content_return> <operator> <exp> | 
+<exp>::=
+    <content_return> <operator> <content_return> |
+    <content_return> <operator> <exp> |
+    <content_return> |
+    <op_bool_un> <content_return> <operator> <content_return> |
+    <op_bool_un> <content_return> <operator> <exp> |
     <op_bool_un> <content_return>
 
 <var>::= <type> <id>: <content_return>
@@ -140,62 +153,85 @@ func g(str x): num { return 1 }
 <args>::= <content_return>,<args> | <content_return>
 <id>::= <letter> <id> | <letter>
 
-<string>::= "<str_content>" | '<str_content>'
-<str_content>::= <letter> <str_content> | <letter> | ` ` <str_content> | ` ` | λ 
+<string>::= "<str_content>" | '<str_content>' | "" | ''
+<str_content>::= <letter> <str_content> | <letter> | ` ` <str_content> | ` ` 
 
 <primitive> ::= <number> | <boolean> | <string>
 <operator> ::= <op_arit> | <op_bool_bin> | <op_comp>
 <number> ::= <number_content> | +<number_content> | -<number_content>
-<number_content> ::= <int> <number_content> | <int>
+<number_content> ::= <int> <number_content> | <int> | .<decimal>
+<decimal> ::= <int> <decimal> | <int>
 <type> ::= str | number | boolean
-<op_arit> ::= + | - | * | / | %
+<op_arit> ::= + | - | * | /
 <op_bool_bin>::= & | `|`
 <op_bool_un>::= !
 <op_comp>::= < | > | <= | >= | == | !=
 <boolean>::= true | false
-<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z 
+<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
 <int>::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ```
-
+# Operaciones posibles entre expresiónes
+| Operación     | Ejemplo            | Resultado                                                           | Tipo   |
+| ------------- | ------------------ | ------------------------------------------------------------------- | ------ |
+| `bool == num` | `true == 1`        | `true` (porque `true` ≡ 1, `false` ≡ 0)                             | `bool` |
+| `str + num`   | `"hola" + 1`       | `"hola1"`                                                           | `str`  |
+| `str + bool`  | `"hola" + true`    | `"holatrue"` o `"hola1"` (según si querés stringify o numeric cast) | `str`  |
+| `num + str`   | `1 + "hola"`       | `"1hola"`                                                           | `str`  |
+| `bool + str`  | `true + "hola"`    | `"truehola"` o `"1hola"`                                            | `str`  |
+| `str * num`   | `"hi" * 3`         | `"hihihi"`                                                          | `str`  |
+| `str * 0`     | `"hi" * 0`         | `""`                                                                | `str`  |
+| `num * bool`  | `5 * true`         | `5`                                                                 | `num`  |
+| `num * false` | `5 * false`        | `0`                                                                 | `num`  |
+| `str / num`   | `"abc" / 2`        | ❌ Error (posible división dispareja)                                    | -     |
+| `num / bool`  | `5 / true`         | `5`                                                                 | `num`  |
+| `num / false` | `5 / false`        | ❌ Error (división por cero)                                        | -      |
+| `str == str`  | `"hola" == "hola"` | `true`                                                              | `bool` |
+| `str == num`  | `"1" == 1`         | `false`                                                               | `bool` |
 
 ## Especificaciones Semánticas
 
 1. **Variables**
- - Deben declararse con tipo explícito.  
- - Siempre deben inicializarse.  
- - No existe inferencia de tipos.  
+
+- Deben declararse con tipo explícito.
+- Siempre deben inicializarse.
+- No existe inferencia de tipos.
 
 2. **Asignación**
- - La expresión debe devolver un valor compatible con el tipo de la variable.  
- - Ejemplo válido:  
-   ``` 
-   num x: 1 + 2
-   ```  
- - Ejemplo inválido:  
-   ``` 
-   name: funcionSinReturn()
-   ```
+
+- La expresión debe devolver un valor compatible con el tipo de la variable.
+- Ejemplo válido:
+  ```
+  num x: 1 + 2
+  ```
+- Ejemplo inválido:
+  ```
+  name: funcionSinReturn()
+  ```
 
 3. **Tipos**
- - Tipado estático y fuerte:  
-   - `num` → enteros  
-   - `str` → cadenas  
-   - `bool` → `true` o `false`   
+
+- Tipado estático y fuerte:
+  - `num` → enteros o decimales
+  - `str` → cadenas
+  - `bool` → `true` o `false`
 
 4. **Control de flujo**
- - `if` evalúa expresiones y ejecuta bloques.  
- - `loop` itera sobre un rango ascendente o descendente.  
+
+- `if` evalúa expresiones y ejecuta bloques.
+- `loop` itera sobre un rango ascendente o descendente.
 
 5. **Funciones**
- - Parámetros con valores por defecto opcionales.  
- - Pasaje de parámetros por valor.  
- - Si la función declara tipo de retorno, debe terminar con `return <expr>`.  
+
+- Parámetros con valores por defecto opcionales.
+- Pasaje de parámetros por valor.
+- Si la función declara tipo de retorno, debe terminar con `return <expr>`.
 
 6. **Ámbito**
- - Variables son locales al bloque `{}`.  
- - Funciones crean su propio ámbito.  
+
+- Variables son locales al bloque `{}`.
+- Funciones crean su propio ámbito.
 
 7. **Ejecución**
- - Modelo secuencial, determinista.  
- - No hay concurrencia ni manejo de errores.  
 
+- Modelo secuencial, determinista.
+- No hay concurrencia ni manejo de errores.
