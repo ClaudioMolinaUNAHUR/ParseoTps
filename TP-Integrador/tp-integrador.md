@@ -2,13 +2,20 @@
 
 ## Objetivo
 
-Se presenta el Lenguaje "Beta"
-Es un lenguaje de programacion esoterico con tipado fuerte, de tipo estructurado,
-maneja expresiones, loops, condicionales y funciones
+El lenguaje Beta está diseñado con un fin didáctico: aprender las nociones fundamentales de los lenguajes de programación estructurados y fuertemente tipados, sin necesidad de enfrentarse a toda la complejidad de un lenguaje real como C, Java o Python.
+
+Se eligió un dominio “matemático y de manejo de listas” porque es un terreno común en las primeras etapas de la enseñanza de algoritmos: trabajar con listas de datos (números, cadenas, valores lógicos) y aplicar sobre ellas operaciones de filtrado, recorridos con bucles, condiciones y funciones recursivas.
+
+De este modo, Beta está pensado como un lenguaje de laboratorio para:
+- Aprender estructuras de control (if, loop).
+- Modelar datos simples (num, str, bool).
+- Manipular colecciones (list<tipo>).
+- Abstraer soluciones en funciones propias o personalizadas.
+- Familiarizarse con los conceptos de ámbitos, retorno de funciones y recursión.
 
 ## Alcance
 
-Solo maneja numeros reales, booleanos y cadenas de textos,
+Solo maneja listas, numeros reales, booleanos y cadenas de textos,
 Puede hacer operacioones logicas, arimeticas y de comparacion
 los condicionales manejan : if, else if, else
 funciones propias y funciones personalizadas
@@ -26,8 +33,11 @@ puede ser recursivo
   true, false, #start, #end
 
 - **Números**
-- Reales con o sin signo: `10.0`, `-5`, `+3.558`
+- Reales con o sin signo: `10.0`, `-5`, `3.558`
 - No se permiten decimales
+
+- **Listas**
+- listas con tipos especificos: `[true, true, false]`, `["", "hola"]`, `[0]`
 
 - **Cadenas (string)**
 - `"..."` o `'...'`
@@ -90,9 +100,9 @@ if (<expr>) { <content> } else { <content> }
 
 ```
 if(x > 0) {
-console("positivo")
+  console("positivo")
 } else {
-console("negativo")
+  console("negativo")
 }
 ```
 
@@ -124,13 +134,13 @@ f(10, 20)
 ```bnf
 <prog>::= #start <content> #end
 <content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | λ
-<content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func>
-<content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id>
+<content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func> | <list> | <comment>
+<content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id> | <len_list_item> | <remove_list_item> | <read_list_item> | <has_list_item> | <remove_list_item>
 <console>::= console(<args>)
 <error>::= error(<string>)
 
-<function>::= func <id> (<param>) { <content> }
-<function_return>::= func <id> (<param>) : <type> { <content> return <content_return> }
+<function>::= func <id> (<param>) { <content> } | func <id> () { <content> }
+<function_return>::= func <id> (<param>) : <type> { <content> return <content_return> } | func <id> () : <type> { <content> return <content_return> }
 <param>::= <type> <id>,  <param> | <var>, <param> | <type> <id> | <var>
 
 <call_func>::= <id>(<args>) | <id>()
@@ -138,7 +148,7 @@ f(10, 20)
 <conditional>::= if ( <content_return> ) { <content> } | if ( <content_return> ) { <content> } else { <content> } | if ( <content_return> ) { <content> } else <conditional>
 
 <loop>::= loop ( <id> in <range>) { <content> }
-<range>:: = range(<number>, <number>) | range(<number>)
+<range>:: = range(<number>, <number>) | range(<number>) | range(<number>, <number>, <number>)
 
 <exp>::=
     <content_return> <operator> <content_return> |
@@ -153,9 +163,20 @@ f(10, 20)
 <args>::= <content_return>,<args> | <content_return>
 <id>::= <letter> <id> | <letter>
 
+<comment>::= //<str_content>
 <string>::= "<str_content>" | '<str_content>' | "" | ''
-<str_content>::= <letter> <str_content> | <letter> | ` ` <str_content> | ` ` 
+<str_content>::= <number> <str_content> | <number> | <letter> <str_content> | <letter> | ` ` <str_content> | ` `
 
+<list_type>::= <type>[]
+<list>::= [<list_content>] | []
+<list_content>::= <content_return>,<list_content> | <content_return>
+<add_list_item>::= <id>.add(<primitive>) | <list>.add(<primitive>)
+<len_list_item>::= <id>.size() | <list>.size()
+<remove_list_item>::= <id>.remove() | <list>.remove()
+<has_list_item>::= <id>.has(<primitive>) | <list>.has(<primitive>)
+<read_list_item>::= <id>[<number>] | <list>[<number>]
+
+<type> ::= str | number | boolean | list<<list_type>>
 <primitive> ::= <number> | <boolean> | <string>
 <operator> ::= <op_arit> | <op_bool_bin> | <op_comp>
 <number> ::= <number_content> | +<number_content> | -<number_content>
@@ -167,10 +188,12 @@ f(10, 20)
 <op_bool_un>::= !
 <op_comp>::= < | > | <= | >= | == | !=
 <boolean>::= true | false
-<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z 
 <int>::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ```
+
 # Operaciones posibles entre expresiónes
+
 | Operación     | Ejemplo            | Resultado                                                           | Tipo   |
 | ------------- | ------------------ | ------------------------------------------------------------------- | ------ |
 | `bool == num` | `true == 1`        | `true` (porque `true` ≡ 1, `false` ≡ 0)                             | `bool` |
@@ -182,11 +205,11 @@ f(10, 20)
 | `str * 0`     | `"hi" * 0`         | `""`                                                                | `str`  |
 | `num * bool`  | `5 * true`         | `5`                                                                 | `num`  |
 | `num * false` | `5 * false`        | `0`                                                                 | `num`  |
-| `str / num`   | `"abc" / 2`        | ❌ Error (posible división dispareja)                                    | -     |
+| `str / num`   | `"abc" / 2`        | ❌ Error (posible división dispareja)                               | -      |
 | `num / bool`  | `5 / true`         | `5`                                                                 | `num`  |
 | `num / false` | `5 / false`        | ❌ Error (división por cero)                                        | -      |
 | `str == str`  | `"hola" == "hola"` | `true`                                                              | `bool` |
-| `str == num`  | `"1" == 1`         | `false`                                                               | `bool` |
+| `str == num`  | `"1" == 1`         | `false`                                                             | `bool` |
 
 ## Especificaciones Semánticas
 
@@ -225,6 +248,52 @@ f(10, 20)
 - Parámetros con valores por defecto opcionales.
 - Pasaje de parámetros por valor.
 - Si la función declara tipo de retorno, debe terminar con `return <expr>`.
+
+EJEMPLOS:
+Se desea tener un sistema de gestión de compras
+```
+
+#start
+
+list<str> productos: []
+list<num> precios: []
+list<bool> comprado: []
+
+// funcion de agregar un producto al carrito con precio determinado
+func agregar(str nombre, num precio) {
+  productos.add(nombre)
+  precios.add(precio)
+  comprado.add(false)
+}
+
+// Se agregan 2 productos al carrito
+agregar("Pan", 120)
+agregar("Leche", 250)
+
+// funcion para realizar la compra de 1 producto
+func comprar(num indice) {
+  comprado[indice]: true
+}
+
+comprar(0)   // Marca Pan como comprado
+
+func total(): num {
+  num suma: 0
+  loop(i in range(0, precios.size())) {
+    suma: suma + precios[i]
+  }
+  return suma
+}
+
+console(total()) // Mostrar precio Total
+
+# comprar todos los productos
+loop(i in range(0, precios.size())) {
+  comprar(i)
+}
+
+#end
+```
 
 6. **Ámbito**
 
