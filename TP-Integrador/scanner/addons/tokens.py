@@ -1,8 +1,8 @@
-# Palabras reservadas
 reserved = {
     "str": "STR",
     "num": "NUM",
     "bool": "BOOL",
+    "list": "LIST",
     "func": "FUNC",
     "return": "RETURN",
     "if": "IF",
@@ -17,18 +17,33 @@ reserved = {
     "#end": "END",
 }
 
-# Tokens generales + reservados
 tokens = [
-    # Identificadores y literales
-    "ID", "NUMBER", "STRING",
-
-    # Operadores
-    "PLUS", "MINUS", "TIMES", "DIVIDE", "MOD",
-    "AND", "OR", "NOT",
-    "LT", "GT", "LE", "GE", "EQ", "NE",
+    "ID",
+    "NUMBER",
+    "STRING",
+    # operadores
+    "PLUS",
+    "MINUS",
+    "MULTIPLY",
+    "DIVIDE",
+    "MOD",
+    "AND",
+    "OR",
+    "NOT",
+    "LT",
+    "GT",
+    "LE",
+    "GE",
+    "EQ",
+    "NE",
     "ASSIGN",
-
-    # Delimitadores
-    "LPAREN", "RPAREN", "LBRACE", "RBRACE",
-    "COMMA", "LBRACKET", "RBRACKET",
+    # delimitadores
+    "LPAREN",
+    "RPAREN",
+    "LBRACE",
+    "RBRACE",
+    "COMMA",
+    "LBRACKET",
+    "RBRACKET",
+    "DOT",
 ] + list(reserved.values())

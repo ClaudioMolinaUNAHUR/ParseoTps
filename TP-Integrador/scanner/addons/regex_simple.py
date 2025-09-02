@@ -1,7 +1,7 @@
 # Operadores
 t_PLUS    = r"\+"
 t_MINUS   = r"-"
-t_TIMES   = r"\*"
+t_MULTIPLY= r"\*"
 t_DIVIDE  = r"/"
 t_MOD     = r"%"
 
@@ -25,6 +25,7 @@ t_RBRACE   = r"\}"
 t_LBRACKET = r"\["
 t_RBRACKET = r"\]"
 t_COMMA    = r","
+t_DOT      = r"\."
 
 
 # Ignorar espacios y tabs

@@ -133,7 +133,7 @@ f(10, 20)
 
 ```bnf
 <prog>::= #start <content> #end
-<content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | λ
+<content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | (<content>) | (<content>) <content> | λ
 <content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func> | <list> | <comment>
 <content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id> | <len_list_item> | <remove_list_item> | <read_list_item> | <has_list_item> | <remove_list_item>
 <console>::= console(<args>)
@@ -163,7 +163,7 @@ f(10, 20)
 <args>::= <content_return>,<args> | <content_return>
 <id>::= <letter> <id> | <letter>
 
-<comment>::= //<str_content>
+<comment>::= //<str_content>-/
 <string>::= "<str_content>" | '<str_content>' | "" | ''
 <str_content>::= <number> <str_content> | <number> | <letter> <str_content> | <letter> | ` ` <str_content> | ` `
 
@@ -179,7 +179,7 @@ f(10, 20)
 <type> ::= str | number | boolean | list<<list_type>>
 <primitive> ::= <number> | <boolean> | <string>
 <operator> ::= <op_arit> | <op_bool_bin> | <op_comp>
-<number> ::= <number_content> | +<number_content> | -<number_content>
+<number> ::= <number_content> | -<number_content>
 <number_content> ::= <int> <number_content> | <int> | .<decimal>
 <decimal> ::= <int> <decimal> | <int>
 <type> ::= str | number | boolean
@@ -259,7 +259,7 @@ list<str> productos: []
 list<num> precios: []
 list<bool> comprado: []
 
-// funcion de agregar un producto al carrito con precio determinado
+// funcion de agregar un producto al carrito con precio determinado -/
 func agregar(str nombre, num precio) {
   productos.add(nombre)
   precios.add(precio)
@@ -270,12 +270,12 @@ func agregar(str nombre, num precio) {
 agregar("Pan", 120)
 agregar("Leche", 250)
 
-// funcion para realizar la compra de 1 producto
+// funcion para realizar la compra de 1 producto -/
 func comprar(num indice) {
   comprado[indice]: true
 }
 
-comprar(0)   // Marca Pan como comprado
+comprar(0)   // Marca Pan como comprado -/
 
 func total(): num {
   num suma: 0
@@ -285,9 +285,9 @@ func total(): num {
   return suma
 }
 
-console(total()) // Mostrar precio Total
+console(total()) // Mostrar precio Total -/
 
-# comprar todos los productos
+// comprar todos los productos -/
 loop(i in range(0, precios.size())) {
   comprar(i)
 }
