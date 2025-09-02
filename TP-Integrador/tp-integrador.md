@@ -45,7 +45,7 @@ puede ser recursivo
 - Ejemplo: `"Hola mundo"`
 
 - **Operadores**
-- Aritméticos: `+ - * / %`
+- Aritméticos: `+ - * /`
 - Lógicos: `& | !`
 - Comparación: `< > <= >= == !=`
 - Asignación: `:`
@@ -133,7 +133,7 @@ f(10, 20)
 
 ```bnf
 <prog>::= #start <content> #end
-<content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | (<content>) | (<content>) <content> | λ
+<content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | (<content>) | (<content>) <content> | () | λ
 <content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func> | <list> | <comment>
 <content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id> | <len_list_item> | <remove_list_item> | <read_list_item> | <has_list_item> | <remove_list_item>
 <console>::= console(<args>)

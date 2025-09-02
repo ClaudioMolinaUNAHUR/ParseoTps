@@ -49,6 +49,7 @@ def main():
     // comprar todos los productos -/
     loop(i in range(0, precios.size())) {
         comprar(i)
+        console("comprando item" + i)
     }
 
     #end

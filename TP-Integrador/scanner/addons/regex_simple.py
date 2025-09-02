@@ -3,7 +3,6 @@ t_PLUS    = r"\+"
 t_MINUS   = r"-"
 t_MULTIPLY= r"\*"
 t_DIVIDE  = r"/"
-t_MOD     = r"%"
 
 t_AND     = r"&"
 t_OR      = r"\|"

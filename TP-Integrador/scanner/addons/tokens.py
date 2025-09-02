@@ -26,7 +26,6 @@ tokens = [
     "MINUS",
     "MULTIPLY",
     "DIVIDE",
-    "MOD",
     "AND",
     "OR",
     "NOT",
