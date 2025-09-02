@@ -38,7 +38,7 @@ def t_newline(t):
 
 
 def t_COMMENT(t):
-    r"//.*\-\/"
+    r"//(.|\n)*?-/"
     pass
 
 

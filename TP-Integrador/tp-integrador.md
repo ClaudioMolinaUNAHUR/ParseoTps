@@ -266,7 +266,7 @@ func agregar(str nombre, num precio) {
   comprado.add(false)
 }
 
-// Se agregan 2 productos al carrito
+// Se agregan 2 productos al carrito -/
 agregar("Pan", 120)
 agregar("Leche", 250)
 
