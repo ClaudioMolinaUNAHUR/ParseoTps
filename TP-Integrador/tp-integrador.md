@@ -170,10 +170,10 @@ f(10, 20)
 <list_type>::= <type>[]
 <list>::= [<list_content>] | []
 <list_content>::= <content_return>,<list_content> | <content_return>
-<add_list_item>::= <id>.add(<primitive>) | <list>.add(<primitive>)
-<len_list_item>::= <id>.size() | <list>.size()
-<remove_list_item>::= <id>.remove() | <list>.remove()
-<has_list_item>::= <id>.has(<primitive>) | <list>.has(<primitive>)
+<add_list_item>::= add(<id>, <primitive>) | add(<list>, <primitive>)
+<len_list_item>::= size(<id>) | size(<list>)
+<remove_list_item>::= remove(<id>) | remove(<list>)
+<has_list_item>::= has(<id>, <primitive>) | has(<list>, <primitive>)
 <read_list_item>::= <id>[<number>] | <list>[<number>]
 
 <type> ::= str | number | boolean | list<<list_type>>
@@ -261,9 +261,9 @@ list<bool> comprado: []
 
 // funcion de agregar un producto al carrito con precio determinado -/
 func agregar(str nombre, num precio) {
-  productos.add(nombre)
-  precios.add(precio)
-  comprado.add(false)
+  add(productos, nombre)
+  add(precios, precio)
+  add(comprado, false)
 }
 
 // Se agregan 2 productos al carrito -/
@@ -279,7 +279,7 @@ comprar(0)   // Marca Pan como comprado -/
 
 func total(): num {
   num suma: 0
-  loop(i in range(0, precios.size())) {
+  loop(i in range(0, size(precios))) {
     suma: suma + precios[i]
   }
   return suma
@@ -288,7 +288,7 @@ func total(): num {
 console(total()) // Mostrar precio Total -/
 
 // comprar todos los productos -/
-loop(i in range(0, precios.size())) {
+loop(i in range(0, size(precios))) {
   comprar(i)
 }
 
