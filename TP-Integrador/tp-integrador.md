@@ -352,25 +352,25 @@ Ejemplo al derivar la cadena
 ```
 
 Derivacion por derecha
-| cadena de derivacion                                          | proxima produccion                                     |
-|---------------------------------------------------------------|--------------------------------------------------------|
-| Programa                                                      | Programa -> #start Content #end                        |
-| #start Content #end                                           | Content -> Content_NoReturn                            |
-| #start Content_NoReturn #end                                  | ContentNoReturn -> Loop                                |
-| #start Loop #end                                              | Loop -> loop ( Id IN Range ) { Content }               |
-| #start loop ( Id IN Range ) { Content } #end                  | Content -> ContentReturn                               |
-| #start loop ( Id IN Range ) { ContentReturn } #end            | ContentReturn -> Console                               |
-| #start loop ( Id IN Range ) { Console } #end                  | Console -> console( Args )                             |
-| #start loop ( Id IN Range ) { console( Args ) } #end          | Args -> ContentReturn                                  |
-| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | ContentReturn -> Id                                    |
-| #start loop ( Id IN Range ) { console( Id ) } #end            | Id -> Letter                                           |
-| #start loop ( Id IN Range ) { console( Letter ) } #end        | Letter -> i                                            |
-| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Range -> range( Number )                               |
-| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Number -> Int                                          |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                               |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Id -> Letter                                           |
-| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Letter -> i                                            |
-| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | accept                                                 |
+| cadena de derivacion                                          | proxima produccion                       |
+|---------------------------------------------------------------|------------------------------------------|
+| Programa                                                      | Programa -> #start Content #end          |
+| #start Content #end                                           | Content -> Content_NoReturn              |
+| #start Content_NoReturn #end                                  | ContentNoReturn -> Loop                  |
+| #start Loop #end                                              | Loop -> loop ( Id IN Range ) { Content } |
+| #start loop ( Id IN Range ) { Content } #end                  | Content -> ContentReturn                 |
+| #start loop ( Id IN Range ) { ContentReturn } #end            | ContentReturn -> Console                 |
+| #start loop ( Id IN Range ) { Console } #end                  | Console -> console( Args )               |
+| #start loop ( Id IN Range ) { console( Args ) } #end          | Args -> ContentReturn                    |
+| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | ContentReturn -> Id                      |
+| #start loop ( Id IN Range ) { console( Id ) } #end            | Id -> Letter                             |
+| #start loop ( Id IN Range ) { console( Letter ) } #end        | Letter -> i                              |
+| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Range -> range( Number )                 |
+| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Number -> Int                            |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                 |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Id -> Letter                             |
+| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Letter -> i                              |
+| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | accept                                   |
 
 Orden Inverso a la derivación por derecha
 
