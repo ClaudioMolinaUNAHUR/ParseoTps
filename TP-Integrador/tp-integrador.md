@@ -7,6 +7,7 @@ El lenguaje Beta está diseñado con un fin didáctico: aprender las nociones fu
 Se eligió un dominio “matemático y de manejo de listas” porque es un terreno común en las primeras etapas de la enseñanza de algoritmos: trabajar con listas de datos (números, cadenas, valores lógicos) y aplicar sobre ellas operaciones de filtrado, recorridos con bucles, condiciones y funciones recursivas.
 
 De este modo, Beta está pensado como un lenguaje de laboratorio para:
+
 - Aprender estructuras de control (if, loop).
 - Modelar datos simples (num, str, bool).
 - Manipular colecciones (list<tipo>).
@@ -188,7 +189,7 @@ f(10, 20)
 <op_bool_un>::= !
 <op_comp>::= < | > | <= | >= | == | !=
 <boolean>::= true | false
-<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z 
+<letter>::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
 <int>::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ```
 
@@ -251,6 +252,7 @@ f(10, 20)
 
 EJEMPLOS:
 Se desea tener un sistema de gestión de compras
+
 ```
 
 #start
@@ -304,3 +306,90 @@ loop(i in range(0, size(precios))) {
 
 - Modelo secuencial, determinista.
 - No hay concurrencia ni manejo de errores.
+
+# Análisis Sintáctico Descendente (ASD) por izquierda
+
+Ejemplo al derivar la cadena
+
+```
+#start
+  loop ( i in range(3) ) {
+   console(i)
+  }
+#end
+```
+
+| cadena de derivacion                                              | proxima produccion                       |
+| ----------------------------------------------------------------- | ---------------------------------------- |
+| Programa                                                          | Programa -> #start Content #end          |
+| #start Content #end                                               | Content -> Content_NoReturn              |
+| #start Content_NoReturn #end                                      | ContentNoReturn -> Loop                  |
+| #start Loop #end                                                  | Loop -> loop ( Id IN Range ) { Content } |
+| #start loop ( Id IN Range ) { Content } #end                      | Id -> Letter                             |
+| #start loop ( Letter IN Range ) { Content } #end                  | Letter -> i                              |
+| #start loop ( i IN Range ) { Content } #end                       | Range -> range( Number )                 |
+| #start loop ( i IN range( Number ) ) { Content } #end             | Number -> Int                            |
+| #start loop ( i IN range( Int ) ) { Content } #end                | Int -> 3                                 |
+| #start loop ( i IN range( 3 ) ) { Content } #end                  | Content -> ContentReturn                 |
+| #start loop ( i IN range( 3 ) ) { ContentReturn } #end            | ContentReturn -> Console                 |
+| #start loop ( i IN range( 3 ) ) { Console } #end                  | Console -> console( Args )               |
+| #start loop ( i IN range( 3 ) ) { console( Args ) } #end          | Args -> ContentReturn                    |
+| #start loop ( i IN range( 3 ) ) { console( ContentReturn ) } #end | ContentReturn -> Id                      |
+| #start loop ( i IN range( 3 ) ) { console( Id ) } #end            | Id -> Letter                             |
+| #start loop ( i IN range( 3 ) ) { console( Letter ) } #end        | Letter -> i                              |
+| #start loop ( i IN range( 3 ) ) { console( i ) } #end             | accept                                   |
+
+# Análisis Sintáctico Ascendente (ASA) por derecha
+
+Ejemplo al derivar la cadena
+
+```
+#start
+  loop ( i in range(3) ) {
+   console(i)
+  }
+#end
+```
+
+Derivacion por derecha
+| cadena de derivacion                                          | proxima produccion                                     |
+|---------------------------------------------------------------|--------------------------------------------------------|
+| Programa                                                      | Programa -> #start Content #end                        |
+| #start Content #end                                           | Content -> Content_NoReturn                            |
+| #start Content_NoReturn #end                                  | ContentNoReturn -> Loop                                |
+| #start Loop #end                                              | Loop -> loop ( Id IN Range ) { Content }               |
+| #start loop ( Id IN Range ) { Content } #end                  | Content -> ContentReturn                               |
+| #start loop ( Id IN Range ) { ContentReturn } #end            | ContentReturn -> Console                               |
+| #start loop ( Id IN Range ) { Console } #end                  | Console -> console( Args )                             |
+| #start loop ( Id IN Range ) { console( Args ) } #end          | Args -> ContentReturn                                  |
+| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | ContentReturn -> Id                                    |
+| #start loop ( Id IN Range ) { console( Id ) } #end            | Id -> Letter                                           |
+| #start loop ( Id IN Range ) { console( Letter ) } #end        | Letter -> i                                            |
+| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Range -> range( Number )                               |
+| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Number -> Int                                          |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                               |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Id -> Letter                                           |
+| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Letter -> i                                            |
+| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | accept                                                 |
+
+Orden Inverso a la derivación por derecha
+
+| cadena de derivacion                                          | proxima produccion                       |
+| ------------------------------------------------------------- | ---------------------------------------- |
+| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | Letter -> i                              |
+| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Id -> Letter                             |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                 |
+| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Number -> Int                            |
+| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Range -> range( Number )                 |
+| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Letter -> i                              |
+| #start loop ( Id IN Range ) { console( Letter ) } #end        | Id -> Letter                             |
+| #start loop ( Id IN Range ) { console( Id ) } #end            | ContentReturn -> Id                      |
+| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | Args -> ContentReturn                    |
+| #start loop ( Id IN Range ) { console( Args ) } #end          | Console -> console( Args )               |
+| #start loop ( Id IN Range ) { Console } #end                  | ContentReturn -> Console                 |
+| #start loop ( Id IN Range ) { ContentReturn } #end            | Content -> ContentReturn                 |
+| #start loop ( Id IN Range ) { Content } #end                  | Loop -> loop ( Id IN Range ) { Content } |
+| #start Loop #end                                              | ContentNoReturn -> Loop                  |
+| #start Content_NoReturn #end                                  | Content -> Content_NoReturn              |
+| #start Content #end                                           | Programa -> #start Content #end          |
+| Programa                                                      | accept                                   |

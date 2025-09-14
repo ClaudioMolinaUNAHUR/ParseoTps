@@ -20,9 +20,9 @@ def main():
 
     // funcion de agregar un producto al carrito con precio determinado -/
     func agregar(str nombre, num precio) {
-        productos.add(nombre)
-        precios.add(precio)
-        comprado.add(false)
+        add(productos, nombre)
+        add(precios, precio)
+        add(comprado, false)
     }
 
     // Se agregan 2 productos al carrito -/
@@ -38,7 +38,7 @@ def main():
 
     func total(): num {
         num suma: 0
-        loop(i in range(0, precios.size())) {
+        loop(i in range(0, size(precios))) {
             suma: suma + precios[i]
         }
         return suma
@@ -47,7 +47,7 @@ def main():
     console(total()) // Mostrar precio Total -/
 
     // comprar todos los productos -/
-    loop(i in range(0, precios.size())) {
+    loop(i in range(0, size(precios))) {
         comprar(i)
         console("comprando item" + i)
     }
