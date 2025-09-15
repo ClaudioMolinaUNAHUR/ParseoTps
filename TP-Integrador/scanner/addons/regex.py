@@ -1,5 +1,6 @@
 from scanner.addons.tokens import *
 from scanner.addons.regex_simple import *
+from scanner.addons.tokens import tokens
 
 
 def t_HASH_RESERVED(t):
@@ -29,6 +30,7 @@ def t_NUMBER(t):
     return t
 
 
+
 t_ignore = " \t"
 
 
@@ -39,6 +41,8 @@ def t_newline(t):
 
 def t_COMMENT(t):
     r"//(.|\n)*?-/"
+    #t.value = t.value
+    #return t
     pass
 
 

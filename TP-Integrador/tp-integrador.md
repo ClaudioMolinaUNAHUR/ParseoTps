@@ -133,57 +133,74 @@ f(10, 20)
 # BNF
 
 ```bnf
-<prog>::= #start <content> #end
-<content>::= <content_no_return> | <content_return> | <content_no_return> <content> | <content_return> <content> | (<content>) | (<content>) <content> | () | λ
-<content_no_return>::= <function> |  <loop> | <conditional> | <var> | <assign> | <call_func> | <list> | <comment>
-<content_return>::= <function_return> | <console> | <error> | <exp> | <call_func> | <primitive> | <id> | <len_list_item> | <remove_list_item> | <read_list_item> | <has_list_item> | <remove_list_item>
-<console>::= console(<args>)
-<error>::= error(<string>)
+<prog> ::= #start <content> #end
 
-<function>::= func <id> (<param>) { <content> } | func <id> () { <content> }
-<function_return>::= func <id> (<param>) : <type> { <content> return <content_return> } | func <id> () : <type> { <content> return <content_return> }
-<param>::= <type> <id>,  <param> | <var>, <param> | <type> <id> | <var>
+<content> ::= <statement_list>
+<statement_list> ::= <statement> <statement_list> | <empty>
+<statement> ::= <content_no_return> | <exp>
 
-<call_func>::= <id>(<args>) | <id>()
+<content_no_return> ::= <function> | <loop> | <conditional> | <var> | <assign> | <list_assign> | <comment> | <add_list_item> | <console>
 
-<conditional>::= if ( <content_return> ) { <content> } | if ( <content_return> ) { <content> } else { <content> } | if ( <content_return> ) { <content> } else <conditional>
+<console> ::= console(<args>)
+<error> ::= error(<string>)
 
-<loop>::= loop ( <id> in <range>) { <content> }
-<range>:: = range(<number>, <number>) | range(<number>) | range(<number>, <number>, <number>)
+<function> ::= func <id> ( <opt_param_list> ) { <content> }
+<function_return> ::= func <id> ( <opt_param_list> ) : <type> { <content> return <exp> }
 
-<exp>::=
-    <content_return> <operator> <content_return> |
-    <content_return> <operator> <exp> |
-    <content_return> |
-    <op_bool_un> <content_return> <operator> <content_return> |
-    <op_bool_un> <content_return> <operator> <exp> |
-    <op_bool_un> <content_return>
+<opt_param_list> ::= <param_list> | <empty>
+<param_list> ::= <param> | <param_list> , <param>
+<param> ::= <type> <id> <opt_default>
+<opt_default> ::= : <exp> | <empty>
 
-<var>::= <type> <id>: <content_return>
-<assign>::= <id>: <content_return>
-<args>::= <content_return>,<args> | <content_return>
-<id>::= <letter> <id> | <letter>
+<call_func> ::= <id>(<args>) | <id>()
 
-<comment>::= //<str_content>-/
-<string>::= "<str_content>" | '<str_content>' | "" | ''
-<str_content>::= <number> <str_content> | <number> | <letter> <str_content> | <letter> | ` ` <str_content> | ` `
+<conditional> ::= if ( <exp> ) { <content> }
+                | if ( <exp> ) { <content> } else { <content> }
+                | if ( <exp> ) { <content> } else <conditional>
 
-<list_type>::= <type>[]
-<list>::= [<list_content>] | []
-<list_content>::= <content_return>,<list_content> | <content_return>
-<add_list_item>::= add(<id>, <primitive>) | add(<list>, <primitive>)
-<len_list_item>::= size(<id>) | size(<list>)
-<remove_list_item>::= remove(<id>) | remove(<list>)
-<has_list_item>::= has(<id>, <primitive>) | has(<list>, <primitive>)
-<read_list_item>::= <id>[<number>] | <list>[<number>]
+<loop> ::= loop ( <id> in <range> ) { <content> }
+<range> ::= range(<exp>) | range(<exp>, <exp>) | range(<exp>, <exp>, <exp>)
 
-<type> ::= str | number | boolean | list<<list_type>>
+<exp> ::= <exp> <operator> <exp>
+        | <op_bool_un> <exp>
+        | <primary_exp>
+
+<primary_exp> ::= <function_return>
+                | <error>
+                | <call_func>
+                | <primitive>
+                | <id>
+                | <len_list_item>
+                | <remove_list_item>
+                | <read_list_item>
+                | <has_list_item>
+                | <list>
+                | ( <exp> )
+<empty>::= λ
+<var> ::= <type> <id>: <exp>
+<assign> ::= <id>: <exp>
+<args> ::= <exp> | <exp> , <args>
+<id> ::= <letter> <id> | <letter>
+
+<comment> ::= //<str_content>-/
+<string> ::= "<str_content>" | '<str_content>' | "" | ''
+<str_content> ::= <number> <str_content> | <number> | <letter> <str_content> | <letter> | ` ` <str_content> | ` `
+
+<list> ::= [ <list_content> ] | []
+<list_content> ::= <exp> | <exp> , <list_content>
+<add_list_item> ::= add( <id> | <list> , <exp> )
+<len_list_item> ::= size( <id> | <list> )
+<remove_list_item> ::= remove( <id> | <list> )
+<has_list_item> ::= has( <id> | <list> , <primitive> )
+<read_list_item> ::=  <id>[ <exp> ] | <list>[ <exp> ] 
+<list_assign> ::= <id>[ <exp> ] : <exp> | <list>[ <exp> ] : <exp>
+
+<type> ::= str | num | bool | list< <type> >
 <primitive> ::= <number> | <boolean> | <string>
 <operator> ::= <op_arit> | <op_bool_bin> | <op_comp>
 <number> ::= <number_content> | -<number_content>
 <number_content> ::= <int> <number_content> | <int> | .<decimal>
 <decimal> ::= <int> <decimal> | <int>
-<type> ::= str | number | boolean
 <op_arit> ::= + | - | * | /
 <op_bool_bin>::= & | `|`
 <op_bool_un>::= !
@@ -319,25 +336,26 @@ Ejemplo al derivar la cadena
 #end
 ```
 
-| cadena de derivacion                                              | proxima produccion                       |
-| ----------------------------------------------------------------- | ---------------------------------------- |
-| Programa                                                          | Programa -> #start Content #end          |
-| #start Content #end                                               | Content -> Content_NoReturn              |
-| #start Content_NoReturn #end                                      | ContentNoReturn -> Loop                  |
-| #start Loop #end                                                  | Loop -> loop ( Id IN Range ) { Content } |
-| #start loop ( Id IN Range ) { Content } #end                      | Id -> Letter                             |
-| #start loop ( Letter IN Range ) { Content } #end                  | Letter -> i                              |
-| #start loop ( i IN Range ) { Content } #end                       | Range -> range( Number )                 |
-| #start loop ( i IN range( Number ) ) { Content } #end             | Number -> Int                            |
-| #start loop ( i IN range( Int ) ) { Content } #end                | Int -> 3                                 |
-| #start loop ( i IN range( 3 ) ) { Content } #end                  | Content -> ContentReturn                 |
-| #start loop ( i IN range( 3 ) ) { ContentReturn } #end            | ContentReturn -> Console                 |
-| #start loop ( i IN range( 3 ) ) { Console } #end                  | Console -> console( Args )               |
-| #start loop ( i IN range( 3 ) ) { console( Args ) } #end          | Args -> ContentReturn                    |
-| #start loop ( i IN range( 3 ) ) { console( ContentReturn ) } #end | ContentReturn -> Id                      |
-| #start loop ( i IN range( 3 ) ) { console( Id ) } #end            | Id -> Letter                             |
-| #start loop ( i IN range( 3 ) ) { console( Letter ) } #end        | Letter -> i                              |
-| #start loop ( i IN range( 3 ) ) { console( i ) } #end             | accept                                   |
+| cadena de derivacion                                     | proxima produccion                       |
+| -------------------------------------------------------- | ---------------------------------------- |
+| program                                                  | program -> #start content #end           |
+| #start content #end                                      | content -> statement_list                |
+| #start statement_list #end                               | statement_list -> statement              |
+| #start statement #end                                    | statement -> content_no_return           |
+| #start content_no_return #end                            | content_no_return -> loop                |
+| #start loop #end                                         | loop -> loop ( id in range ) { content } |
+| #start loop ( i in range ) { content } #end              | id -> i                                  |
+| #start loop ( i in range(exp) ) { content } #end         | range -> range(exp)                      |
+| #start loop ( i in range(3) ) { content } #end           | exp -> 3                                 |
+| #start loop ( i in range(3) ) { statement_list } #end    | content -> statement_list                |
+| #start loop ( i in range(3) ) { statement } #end         | statement_list -> statement              |
+| #start loop ( i in range(3) ) { content_no_return } #end | statement -> content_no_return           |
+| #start loop ( i in range(3) ) { console } #end           | content_no_return -> console             |
+| #start loop ( i in range(3) ) { console(args) } #end     | console -> console(args)                 |
+| #start loop ( i in range(3) ) { console(exp) } #end      | args -> exp                              |
+| #start loop ( i in range(3) ) { console(id) } #end       | exp -> id                                |
+| #start loop ( i in range(3) ) { console(i) } #end        | id -> i                                  |
+| #start loop ( i in range(3) ) { console(i) } #end        | accept                                   |
 
 # Análisis Sintáctico Ascendente (ASA) por derecha
 
@@ -352,44 +370,53 @@ Ejemplo al derivar la cadena
 ```
 
 Derivacion por derecha
-| cadena de derivacion                                          | proxima produccion                       |
-|---------------------------------------------------------------|------------------------------------------|
-| Programa                                                      | Programa -> #start Content #end          |
-| #start Content #end                                           | Content -> Content_NoReturn              |
-| #start Content_NoReturn #end                                  | ContentNoReturn -> Loop                  |
-| #start Loop #end                                              | Loop -> loop ( Id IN Range ) { Content } |
-| #start loop ( Id IN Range ) { Content } #end                  | Content -> ContentReturn                 |
-| #start loop ( Id IN Range ) { ContentReturn } #end            | ContentReturn -> Console                 |
-| #start loop ( Id IN Range ) { Console } #end                  | Console -> console( Args )               |
-| #start loop ( Id IN Range ) { console( Args ) } #end          | Args -> ContentReturn                    |
-| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | ContentReturn -> Id                      |
-| #start loop ( Id IN Range ) { console( Id ) } #end            | Id -> Letter                             |
-| #start loop ( Id IN Range ) { console( Letter ) } #end        | Letter -> i                              |
-| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Range -> range( Number )                 |
-| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Number -> Int                            |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                 |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Id -> Letter                             |
-| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Letter -> i                              |
-| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | accept                                   |
+
+| cadena de derivacion                                         | proxima produccion                       |
+| ------------------------------------------------------------ | ---------------------------------------- |
+| program                                                      | program -> #start content #end           |
+| #start content #end                                          | content -> statement_list                |
+| #start statement_list #end                                   | statement_list -> statement              |
+| #start statement #end                                        | statement -> content_no_return           |
+| #start content_no_return #end                                | content_no_return -> loop                |
+| #start loop #end                                             | loop -> loop ( id in range ) { content } |
+| #start loop ( id in range ) { content } #end                 | content -> statement_list                |
+| #start loop ( id in range ) { statement_list } #end          | statement_list -> statement              |
+| #start loop ( id in range ) { statement } #end               | statement -> content_no_return           |
+| #start loop ( id in range ) { content_no_return } #end       | content_no_return -> console             |
+| #start loop ( id in range ) { console } #end                 | console -> console(args)                 |
+| #start loop ( id in range ) { console(args) } #end           | args -> exp                              |
+| #start loop ( id in range ) { console(exp) } #end            | exp -> primary_exp                       |
+| #start loop ( id in range ) { console(primary_exp) } #end    | primary_exp -> id                        |
+| #start loop ( id in range ) { console(id) } #end             | id -> i                                  |
+| #start loop ( id in range ) { console(i) } #end              | range -> range(exp)                      |
+| #start loop ( id in range(exp) ) { console(i) } #end         | exp -> primary_exp                       |
+| #start loop ( id in range(primary_exp) ) { console(i) } #end | primary_exp -> primitive                 |
+| #start loop ( id in range(primitive) ) { console(i) } #end   | primitive -> 3                           |
+| #start loop ( id in range(3) ) { console(i) } #end           | id -> i                                  |
+| #start loop ( i in range(3) ) { console(i) } #end            | accept                                   |
 
 Orden Inverso a la derivación por derecha
 
-| cadena de derivacion                                          | proxima produccion                       |
-| ------------------------------------------------------------- | ---------------------------------------- |
-| #start loop ( i IN range( 3 ) ) { console( i ) } #end         | Letter -> i                              |
-| #start loop ( Letter IN range( 3 ) ) { console( i ) } #end    | Id -> Letter                             |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Int -> 3                                 |
-| #start loop ( Id IN range( 3 ) ) { console( i ) } #end        | Number -> Int                            |
-| #start loop ( Id IN range( Int ) ) { console( i ) } #end      | Range -> range( Number )                 |
-| #start loop ( Id IN range( Number ) ) { console( i ) } #end   | Letter -> i                              |
-| #start loop ( Id IN Range ) { console( Letter ) } #end        | Id -> Letter                             |
-| #start loop ( Id IN Range ) { console( Id ) } #end            | ContentReturn -> Id                      |
-| #start loop ( Id IN Range ) { console( ContentReturn ) } #end | Args -> ContentReturn                    |
-| #start loop ( Id IN Range ) { console( Args ) } #end          | Console -> console( Args )               |
-| #start loop ( Id IN Range ) { Console } #end                  | ContentReturn -> Console                 |
-| #start loop ( Id IN Range ) { ContentReturn } #end            | Content -> ContentReturn                 |
-| #start loop ( Id IN Range ) { Content } #end                  | Loop -> loop ( Id IN Range ) { Content } |
-| #start Loop #end                                              | ContentNoReturn -> Loop                  |
-| #start Content_NoReturn #end                                  | Content -> Content_NoReturn              |
-| #start Content #end                                           | Programa -> #start Content #end          |
-| Programa                                                      | accept                                   |
+| cadena de derivacion                                        | proxima produccion                       |
+| ----------------------------------------------------------- | ---------------------------------------- |
+| #start loop ( i in range(3) ) { console(i) } #end           | id -> i                                  |
+| #start loop ( i in range(3) ) { console(id) } #end          | primary_exp -> id                        |
+| #start loop ( i in range(3) ) { console(primary_exp) } #end | exp -> primary_exp                       |
+| #start loop ( i in range(3) ) { console(exp) } #end         | args -> exp                              |
+| #start loop ( i in range(3) ) { console(args) } #end        | console -> console(args)                 |
+| #start loop ( i in range(3) ) { console } #end              | content_no_return -> console             |
+| #start loop ( i in range(3) ) { content_no_return } #end    | statement -> content_no_return           |
+| #start loop ( i in range(3) ) { statement } #end            | statement_list -> statement              |
+| #start loop ( i in range(3) ) { statement_list } #end       | content -> statement_list                |
+| #start loop ( i in range(3) ) { content } #end              | primitive -> 3                           |
+| #start loop ( i in range(primitive) ) { content } #end      | primary_exp -> primitive                 |
+| #start loop ( i in range(primary_exp) ) { content } #end    | exp -> primary_exp                       |
+| #start loop ( i in range(exp) ) { content } #end            | range -> range(exp)                      |
+| #start loop ( i in range ) { content } #end                 | id -> i                                  |
+| #start loop ( id in range ) { content } #end                | loop -> loop ( id in range ) { content } |
+| #start loop #end                                            | content_no_return -> loop                |
+| #start content_no_return #end                               | statement -> content_no_return           |
+| #start statement #end                                       | statement_list -> statement              |
+| #start statement_list #end                                  | content -> statement_list                |
+| #start content #end                                         | program -> #start content #end           |
+| program                                                     | accept                                   |

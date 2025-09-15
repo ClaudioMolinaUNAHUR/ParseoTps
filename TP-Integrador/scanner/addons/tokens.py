@@ -15,6 +15,11 @@ reserved = {
     "false": "FALSE",
     "#start": "START",
     "#end": "END",
+     # TODO: implementar 
+    "size": "SIZE",
+    "add": "ADD",
+    "remove": "REMOVE", 
+    "has": "HAS",
 }
 
 tokens = [
@@ -26,16 +31,15 @@ tokens = [
     "MINUS",
     "MULTIPLY",
     "DIVIDE",
-    "AND",
-    "OR",
     "NOT",
+    "AND",
+    "OR",    
     "LT",
     "GT",
     "LE",
     "GE",
     "EQ",
     "NE",
-    "ASSIGN",
     # delimitadores
     "LPAREN",
     "RPAREN",
@@ -44,5 +48,7 @@ tokens = [
     "COMMA",
     "LBRACKET",
     "RBRACKET",
-    "DOT",
+    "COLON",
+    #otros
+    "COMMENT",
 ] + list(reserved.values())
