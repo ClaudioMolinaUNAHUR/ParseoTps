@@ -14,12 +14,21 @@ def run_test(name, code):
     full_code = f"#start\n{code}\n#end"
 
     lexer.input(full_code)
-    result = parser.parse(full_code, lexer=lexer)
-    print("AST:", result)
+    try:
+        result = parser.parse(full_code, lexer=lexer)
+        print("AST:", result)
 
-    interpreter = Interpreter()
-    interpreter.execute(result)
-
+        # Si el AST es None, la interpretación fallará.
+        if result:
+            interpreter = Interpreter()
+            interpreter.execute(result)
+        elif name != "ERRORS":
+            print("El parsing falló y no se generó un AST.")
+    except SyntaxError:
+        if name == "ERRORS":
+            print("Prueba exitosa: Se capturó un error de sintaxis como se esperaba.")
+        else:
+            print(f"Error: Se encontró un error de sintaxis inesperado en la prueba '{name}'.")
     print(f"--- Finished test: {name} ---\n")
 
 
@@ -126,20 +135,29 @@ def test_if_else():
     console(!true)
     """
     run_test("If/Else", code)
+    
+def test_sintaxis_error():
+    codes = {
+        "Mala declaracion": "[num x: 10]",
+        "error de asignacion" :"str x: <=",
+        "error de for": 'for (x > 0) { result: "true" } else { result: "falso" }',
+        "error en parentesis console": "console)()",
+        "error en expresion": "+ 10",    
+    }
+    for i, code in codes.items():
+        run_test(i, code)
 
 
 def main():
-    # You can run all tests
     test_main_program()
     test_loop()
     test_var_primitive()
     test_list()
     test_list_actions()
     test_if_else()
-
-    # Or comment out the above and run a specific test for more focused debugging
-    # print("--- Running a single test ---")
-    # test_loop()
+    
+    print(f"--- Manehjo de Errores ---\n")
+    test_sintaxis_error()
 
 
 if __name__ == "__main__":

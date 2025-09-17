@@ -1,3 +1,6 @@
+# tokens que reconoce el lexer, luego el parser los usara como terminales (tokens)
+# algunos tokens son palabras reservadas (reserved), que tienen un significado especial en el
+# "COMO_SE_ESCRIBE_EN_CODIGO" : "NOMBRE_DEL_TOKEN"
 reserved = {
     "str": "STR",
     "num": "NUM",
@@ -22,6 +25,9 @@ reserved = {
     "has": "HAS",
 }
 
+#son todos los tokens, incluidos los reserved
+#10, "hola", seran 1 token cada uno
+#10 , "hola", seran token NUMBER, STRING
 tokens = [
     "ID",
     "NUMBER",

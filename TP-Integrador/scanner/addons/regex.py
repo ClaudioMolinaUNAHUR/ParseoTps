@@ -2,7 +2,9 @@ from scanner.addons.tokens import *
 from scanner.addons.regex_simple import *
 from scanner.addons.tokens import tokens
 
-
+# estas expresiones regulares son para tokens compuestos por varios caracteres
+# luego el parser, los usara como terminales (tokens)
+#Ejemplo: ID es un token, que puede estar compuesto por varios caracteres (letras)
 def t_HASH_RESERVED(t):
     r"\#start|\#end"
     t.type = reserved.get(t.value, "ID")  # devuelve START o END reserved

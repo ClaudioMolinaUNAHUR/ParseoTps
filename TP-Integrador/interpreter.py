@@ -89,14 +89,38 @@ class Interpreter:
             if isinstance(left_val, str) or isinstance(right_val, str):
                 return str(left_val) + str(right_val)
         
-        if op == '+': return left_val + right_val
-        if op == '-': return left_val - right_val
-        if op == '*': return left_val * right_val
-        if op == '/': return left_val / right_val
-        if op == '>': return left_val > right_val
-        if op == '<': return left_val < right_val
-        if op == '>=': return left_val >= right_val
-        if op == '<=': return left_val <= right_val
+        if op == '+': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '+' cannot be None")
+            return left_val + right_val
+        if op == '-': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '-' cannot be None")
+            return left_val - right_val
+        if op == '*': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '*' cannot be None")
+            return left_val * right_val
+        if op == '/': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '/' cannot be None")
+            return left_val / right_val
+        if op == '>': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '>' cannot be None")
+            return left_val > right_val
+        if op == '<': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '<' cannot be None")
+            return left_val < right_val
+        if op == '>=': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '>=' cannot be None")
+            return left_val >= right_val
+        if op == '<=': 
+            if left_val is None or right_val is None:
+                raise TypeError("Operands for '<=' cannot be None")
+            return left_val <= right_val
         if op == '==': return left_val == right_val
         if op == '!=': return left_val != right_val
         if op == '&': return left_val and right_val
@@ -195,7 +219,9 @@ class Interpreter:
         end = self._visit(range_args[1]) if len(range_args) > 1 else start
         if len(range_args) == 1: start = 0
         
-        for i in range(start, end):
+        if start is None or end is None:
+            raise ValueError("Start and end values for the loop range cannot be None.")
+        for i in range(int(start), int(end)):
             self.symbol_table.enter_scope()
             self.symbol_table.set(var_name, i)
             self._visit(body)
@@ -219,6 +245,8 @@ class Interpreter:
         _, list_node, index_expr = node
         the_list = self._visit(list_node)
         index = self._visit(index_expr)
+        if the_list is None:
+            raise TypeError("Cannot access an item from a NoneType object.")
         return the_list[index]
 
     def _visit_list_assign(self, node):
@@ -227,9 +255,13 @@ class Interpreter:
         the_list = self._visit(list_node)
         index = self._visit(index_expr)
         value = self._visit(value_expr)
+        if the_list is None:
+            raise TypeError("Cannot assign to an index of a NoneType object.")
         the_list[index] = value
 
     def _visit_len_list_item(self, node):
         # ('len_list_item', list_node)
         list_val = self._visit(node[1])
+        if list_val is None:
+            raise TypeError("Cannot get the length of a NoneType object.")
         return len(list_val)

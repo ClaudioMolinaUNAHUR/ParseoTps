@@ -11,8 +11,12 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'MULTIPLY', 'DIVIDE'),
 )
-
+#p[0] es el axioma de la gramatica
+#p[1] - p[n] son los simbolos, terminales y no terminales, que componen la produccion
+#las que estan en MAYUS, son terminales (tokens)
+#las que estan en minus, son no terminales (producciones)
 #<prog>::= #start <content> #end
+#ID puede ser confuso pero es un token, terminal que esta compuesto por letras, ya reconocidas por el lexer
 def p_program(p):
     '''program : START content END'''
     p[0] = ('program', p[2])
@@ -62,13 +66,18 @@ def p_content_no_return(p):
 def p_console(p):
     '''console : CONSOLE LPAREN args RPAREN'''
     p[0] = ('console', p[3])
-    
+
 def p_error(p):
     """Special rule for syntax errors. Tries to print context."""
     if p:
-        print(f"Error de sintaxis en el token '{p.value}' (tipo: {p.type}) en la línea {p.lineno}")
+        message = f"Error de sintaxis en el token '{p.value}' (tipo: {p.type}) en la línea {p.lineno}"
+        print(message)
     else:
-        print("Error de sintaxis al final del archivo (EOF)")
+        message = "Error de sintaxis al final del archivo (EOF)"
+        print(message)
+    # Para evitar que el parser se cuelgue con errores de sintaxis, es mejor detener la ejecución.
+    # Lanzar una excepción es una forma simple y efectiva de lograrlo.
+    raise SyntaxError(message)
 #<function>::= func <id>(<param>) {<content>} | func <id>() {<content>}
 def p_function(p):
     '''function : FUNC ID LPAREN opt_param_list RPAREN LBRACE content RBRACE'''
@@ -170,8 +179,7 @@ def p_exp(p):
 #                | <list>
 #                | ( <exp> )
 def p_primary_exp(p):
-    '''primary_exp : error
-                   | call_func
+    '''primary_exp : call_func
                    | primitive
                    | id
                    | len_list_item
