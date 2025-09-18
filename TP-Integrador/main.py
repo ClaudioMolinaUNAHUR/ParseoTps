@@ -142,7 +142,8 @@ def test_sintaxis_error():
         "error de asignacion" :"str x: <=",
         "error de for": 'for (x > 0) { result: "true" } else { result: "falso" }',
         "error en parentesis console": "console)()",
-        "error en expresion": "+ 10",    
+        "error en expresion": "+ 10", 
+        "error en id": "if",   
     }
     for i, code in codes.items():
         run_test(i, code)
