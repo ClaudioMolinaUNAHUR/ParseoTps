@@ -344,7 +344,8 @@ Ejemplo al derivar la cadena
 | #start statement #end                                       | statement -> content_no_return           |
 | #start content_no_return #end                               | content_no_return -> loop                |
 | #start loop #end                                            | loop -> loop ( id in range ) { content } |
-| #start loop ( id in range ) { content } #end                | id -> i                                  |
+| #start loop ( id in range ) { content } #end                | id -> letter                             |
+| #start loop ( letter in range ) { content } #end            | letter -> i                              |
 | #start loop ( i in range ) { content } #end                 | range -> range(exp)                      |
 | #start loop ( i in range(exp) ) { content } #end            | exp -> primary_exp                       |
 | #start loop ( i in range(primary_exp) ) { content } #end    | primary_exp -> primitive                 |
@@ -376,52 +377,60 @@ Ejemplo al derivar la cadena
 
 Derivacion por derecha
 
-| cadena de derivacion                                         | proxima produccion                       |
-| ------------------------------------------------------------ | ---------------------------------------- |
-| program                                                      | program -> #start content #end           |
-| #start content #end                                          | content -> statement_list                |
-| #start statement_list #end                                   | statement_list -> statement              |
-| #start statement #end                                        | statement -> content_no_return           |
-| #start content_no_return #end                                | content_no_return -> loop                |
-| #start loop #end                                             | loop -> loop ( id in range ) { content } |
-| #start loop ( id in range ) { content } #end                 | content -> statement_list                |
-| #start loop ( id in range ) { statement_list } #end          | statement_list -> statement              |
-| #start loop ( id in range ) { statement } #end               | statement -> content_no_return           |
-| #start loop ( id in range ) { content_no_return } #end       | content_no_return -> console             |
-| #start loop ( id in range ) { console } #end                 | console -> console(args)                 |
-| #start loop ( id in range ) { console(args) } #end           | args -> exp                              |
-| #start loop ( id in range ) { console(exp) } #end            | exp -> primary_exp                       |
-| #start loop ( id in range ) { console(primary_exp) } #end    | primary_exp -> id                        |
-| #start loop ( id in range ) { console(id) } #end             | id -> i                                  |
-| #start loop ( id in range ) { console(i) } #end              | range -> range(exp)                      |
-| #start loop ( id in range(exp) ) { console(i) } #end         | exp -> primary_exp                       |
-| #start loop ( id in range(primary_exp) ) { console(i) } #end | primary_exp -> primitive                 |
-| #start loop ( id in range(primitive) ) { console(i) } #end   | primitive -> 3                           |
-| #start loop ( id in range(3) ) { console(i) } #end           | id -> i                                  |
-| #start loop ( i in range(3) ) { console(i) } #end            | accept                                   |
+| cadena de derivacion                                            | proxima produccion                       |
+| --------------------------------------------------------------- | ---------------------------------------- |
+| prog                                                            | prog -> #start content #end              |
+| #start content #end                                             | content -> statement_list                |
+| #start statement_list #end                                      | statement_list -> statement              |
+| #start statement #end                                           | statement -> content_no_return           |
+| #start content_no_return #end                                   | content_no_return -> loop                |
+| #start loop #end                                                | loop -> loop ( id in range ) { content } |
+| #start loop ( id in range ) { content } #end                    | content -> statement_list                |
+| #start loop ( id in range ) { statement_list } #end             | statement_list -> statement              |
+| #start loop ( id in range ) { statement } #end                  | statement -> content_no_return           |
+| #start loop ( id in range ) { content_no_return } #end          | content_no_return -> console             |
+| #start loop ( id in range ) { console } #end                    | console -> console(args)                 |
+| #start loop ( id in range ) { console(args) } #end              | args -> exp                              |
+| #start loop ( id in range ) { console(exp) } #end               | exp -> primary_exp                       |
+| #start loop ( id in range ) { console(primary_exp) } #end       | primary_exp -> id                        |
+| #start loop ( id in range ) { console(id) } #end                | id -> i                                  |
+| #start loop ( id in range ) { console(i) } #end                 | range -> range(exp)                      |
+| #start loop ( id in range(exp) ) { console(i) } #end            | exp -> primary_exp                       |
+| #start loop ( id in range(primary_exp) ) { console(i) } #end    | primary_exp -> primitive                 |
+| #start loop ( id in range(primitive) ) { console(i) } #end      | primitive -> number                      |
+| #start loop ( id in range(number) ) { console(i) } #end         | number -> number_content                 |
+| #start loop ( id in range(number_content) ) { console(i) } #end | number_content -> int                    |
+| #start loop ( id in range(int) ) { console(i) } #end            | int -> 3                                 |
+| #start loop ( id in range(3) ) { console(i) } #end              | id -> letter                             |
+| #start loop ( letter in range(3) ) { console(i) } #end          | letter -> i                              |
+| #start loop ( i in range(3) ) { console(i) } #end               | accept                                   |
 
 Orden Inverso a la derivación por derecha
 
-| cadena de derivacion                                        | proxima produccion                       |
-| ----------------------------------------------------------- | ---------------------------------------- |
-| #start loop ( i in range(3) ) { console(i) } #end           | id -> i                                  |
-| #start loop ( i in range(3) ) { console(id) } #end          | primary_exp -> id                        |
-| #start loop ( i in range(3) ) { console(primary_exp) } #end | exp -> primary_exp                       |
-| #start loop ( i in range(3) ) { console(exp) } #end         | args -> exp                              |
-| #start loop ( i in range(3) ) { console(args) } #end        | console -> console(args)                 |
-| #start loop ( i in range(3) ) { console } #end              | content_no_return -> console             |
-| #start loop ( i in range(3) ) { content_no_return } #end    | statement -> content_no_return           |
-| #start loop ( i in range(3) ) { statement } #end            | statement_list -> statement              |
-| #start loop ( i in range(3) ) { statement_list } #end       | content -> statement_list                |
-| #start loop ( i in range(3) ) { content } #end              | primitive -> 3                           |
-| #start loop ( i in range(primitive) ) { content } #end      | primary_exp -> primitive                 |
-| #start loop ( i in range(primary_exp) ) { content } #end    | exp -> primary_exp                       |
-| #start loop ( i in range(exp) ) { content } #end            | range -> range(exp)                      |
-| #start loop ( i in range ) { content } #end                 | id -> i                                  |
-| #start loop ( id in range ) { content } #end                | loop -> loop ( id in range ) { content } |
-| #start loop #end                                            | content_no_return -> loop                |
-| #start content_no_return #end                               | statement -> content_no_return           |
-| #start statement #end                                       | statement_list -> statement              |
-| #start statement_list #end                                  | content -> statement_list                |
-| #start content #end                                         | prog -> #start content #end              |
-| prog                                                        | accept                                   |
+| cadena de derivacion                                            | proxima produccion                       |
+| --------------------------------------------------------------- | ---------------------------------------- |
+| #start loop ( i in range(3) ) { console(i) } #end               | letter -> i                              |
+| #start loop ( letter in range(3) ) { console(i) } #end          | id -> letter                             |
+| #start loop ( id in range(3) ) { console(i) } #end              | int -> 3                                 |
+| #start loop ( id in range(int) ) { console(i) } #end            | number_content -> int                    |
+| #start loop ( id in range(number_content) ) { console(i) } #end | number -> number_content                 |
+| #start loop ( id in range(number) ) { console(i) } #end         | primitive -> number                      |
+| #start loop ( id in range(primitive) ) { console(i) } #end      | primary_exp -> primitive                 |
+| #start loop ( id in range(primary_exp) ) { console(i) } #end    | exp -> primary_exp                       |
+| #start loop ( id in range(exp) ) { console(i) } #end            | range -> range(exp)                      |
+| #start loop ( id in range ) { console(i) } #end                 | id -> i                                  |
+| #start loop ( id in range ) { console(id) } #end                | primary_exp -> id                        |
+| #start loop ( id in range ) { console(primary_exp) } #end       | exp -> primary_exp                       |
+| #start loop ( id in range ) { console(exp) } #end               | args -> exp                              |
+| #start loop ( id in range ) { console(args) } #end              | console -> console(args)                 |
+| #start loop ( id in range ) { console } #end                    | content_no_return -> console             |
+| #start loop ( id in range ) { content_no_return } #end          | statement -> content_no_return           |
+| #start loop ( id in range ) { statement } #end                  | statement_list -> statement              |
+| #start loop ( id in range ) { statement_list } #end             | content -> statement_list                |
+| #start loop ( id in range ) { content } #end                    | loop -> loop ( id in range ) { content } |
+| #start loop #end                                                | content_no_return -> loop                |
+| #start content_no_return #end                                   | statement -> content_no_return           |
+| #start statement #end                                           | statement_list -> statement              |
+| #start statement_list #end                                      | content -> statement_list                |
+| #start content #end                                             | prog -> #start content #end              |
+| prog                                                            | accept                                   |
