@@ -434,3 +434,99 @@ Orden Inverso a la derivación por derecha
 | #start statement_list #end                                      | content -> statement_list                |
 | #start content #end                                             | prog -> #start content #end              |
 | prog                                                            | accept                                   |
+
+# Análisis Sintáctico Ascendente (ASD) con retroceso
+
+```
+#start
+  loop ( i in range(3) ) {
+   console(i)
+  }
+#end
+```
+```
+  δ(q0, λ, λ) => (q1, *)
+  δ(q1, λ, λ) => (q2, prog)
+
+  δ(q2, λ, prog) => (q2, #start Content #end)
+  δ(q2, λ, Content) => (q2, Statement_list)
+  δ(q2, λ, Statement_list) => (q2, Statement)
+  δ(q2, λ, Statement) => (q2, Content_no_return)
+  δ(q2, λ, Content_no_return) => (q2, Console)
+  δ(q2, λ, Content_no_return) => (q2, Loop)
+  δ(q2, λ, Loop) => (q2, loop ( Id in Range ) { Content })
+  δ(q2, λ, Id) => (q1, Letter)
+  δ(q2, λ, Letter) => (q2, i)
+  δ(q2, λ, Range) => (q2, range(Exp))
+  δ(q2, λ, Exp) => (q2, Primary_exp)
+  δ(q2, λ, Exp) => (q2, Id)
+  δ(q2, λ, Primary_exp) => (q2, Primitive)
+  δ(q2, λ, Primitive) => (q2, Number)
+  δ(q2, λ, Number) => (q2, Number_content)
+  δ(q2, λ, Number_content) => (q2, Int)
+  δ(q2, λ, Int) => (q2, 3)
+  δ(q2, λ, Console) => (q2, console(Args))
+  δ(q2, λ, Args) => (q2, Exp)
+
+  δ(q2, #start, #start) => (q2, λ)
+  δ(q2, #end, #end) => (q2, λ)
+  δ(q2, loop, loop) => (q2, λ)
+  δ(q2, (, () => (q2, λ)
+  δ(q2, in, in) => (q2, λ)
+  δ(q2, ), )) => (q2, λ)
+  δ(q2, 3, 3) => (q2, λ)
+  δ(q2, console, console) => (q2, λ)
+  δ(q2, range, range) => (q2, λ)
+  δ(q2, }, }) => (q2, λ)
+  δ(q2, {, {) => (q2, λ)
+
+  δ(q2, λ, *) => (q3, λ)
+```
+
+| Pila                                    | Cadena                                           | transicion                                              |
+| --------------------------------------- | ------------------------------------------------ | ------------------------------------------------------- |
+| λ                                       | #start loop ( i in range(3) ) { console(i)} #end | δ(q0, λ, λ)=> (q1, \*)                                  |
+| \*                                      | #start loop ( i in range(3) ) { console(i)} #end | δ(q1, λ, λ)=> (q2, prog)                                |
+| \*prog                                  | #start loop ( i in range(3) ) { console(i)} #end | δ(q2, λ, prog)=> (q2, #start Content #end)              |
+| \*#end Content #start                   | #start loop ( i in range(3) ) { console(i)} #end | δ(q2, #start , #start)=> (q2, λ)                        |
+| \*#end Content                          | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Content)=> (q2, Statement_list)                |
+| \*#end Statement_list                   | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Statement_list)=> (q2, Statement)              |
+| \*#end Statement                        | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Statement)=> (q2, Content_no_return)           |
+| \*#end Content_no_return                | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Content_no_return)=> (q2, Loop)                |
+| \*#end Loop                             | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Loop)=> (q2, loop ( Id in Range ) { Content }) |
+| \*#end } Content { ) Range in Id ( loop | loop ( i in range(3) ) { console(i)} #end        | δ(q2, loop, loop)=> (q2, λ)                             |
+| \*#end } Content { ) Range in Id (      | ( i in range(3) ) { console(i)} #end             | δ(q2, (, ()=> (q2, λ)                                   |
+| \*#end } Content { ) Range in Id        | i in range(3) ) { console(i)} #end               | δ(q2, λ, Id)=> (q1, Letter)                             |
+| \*#end } Content { ) Range in Letter    | i in range(3) ) { console(i)} #end               | δ(q2, λ, Letter)=> (q2, i)                              |
+| \*#end } Content { ) Range in i         | i in range(3) ) { console(i)} #end               | δ(q2, i, i)=> (q2, λ)                                   |
+| \*#end } Content { ) Range in           | in range(3) ) { console(i)} #end                 | δ(q2, in, in)=> (q2, λ)                                 |
+| \*#end } Content { ) Range              | range(3) ) { console(i)} #end                    | δ(q2, λ, Range)=> (q2, range(Exp) )                     |
+| \*#end } Content { ) ) Exp ( range      | range(3) ) { console(i)} #end                    | δ(q2, range, range)=> (q2, λ)                           |
+| \*#end } Content { ) ) Exp (            | (3) ) { console(i)} #end                         | δ(q2, (, ()=> (q2, λ)                                   |
+| \*#end } Content { ) ) Exp              | 3) ) { console(i)} #end                          | δ(q2, λ, Exp)=> (q2, Primary_exp )                      |
+| \*#end } Content { ) ) Primary_exp      | 3) ) { console(i)} #end                          | δ(q2, λ, Primary_exp)=> (q2, Primitive )                |
+| \*#end } Content { ) ) Primitive        | 3) ) { console(i)} #end                          | δ(q2, λ, Primitive)=> (q2, Number )                     |
+| \*#end } Content { ) ) Number           | 3) ) { console(i)} #end                          | δ(q2, λ, Number)=> (q2, Number_content )                |
+| \*#end } Content { ) ) Number_content   | 3) ) { console(i)} #end                          | δ(q2, λ, Number_content)=> (q2, Int)                    |
+| \*#end } Content { ) ) Int              | 3) ) { console(i)} #end                          | δ(q2, λ, Int)=> (q2, 3)                                 |
+| \*#end } Content { ) ) 3                | 3) ) { console(i)} #end                          | δ(q2, 3, 3)=> (q2, λ)                                   |
+| \*#end } Content { ) )                  | ) ) { console(i)} #end                           | δ(q2, ), ))=> (q2, λ)                                   |
+| \*#end } Content { )                    | ) { console(i)} #end                             | δ(q2, ), ))=> (q2, λ)                                   |
+| \*#end } Content {                      | { console(i)} #end                               | δ(q2, {, {)=> (q2, λ)                                   |
+| \*#end } Content                        | console(i)} #end                                 | δ(q2, λ, Content)=> (q2, Statement_list)                |
+| \*#end } Statement_list                 | console(i)} #end                                 | δ(q2, λ, Statement_list)=> (q2, Statement)              |
+| \*#end } Statement                      | console(i)} #end                                 | δ(q2, λ, Statement)=> (q2, Content_no_return)           |
+| \*#end } Content_no_return              | console(i)} #end                                 | δ(q2, λ, Content_no_return)=> (q2, Console)             |
+| \*#end } Console                        | console(i)} #end                                 | δ(q2, λ, Console)=> (q2, console(Args))                 |
+| \*#end } ) Args ( console               | console(i)} #end                                 | δ(q2, console, console)=> (q2, λ)                       |
+| \*#end } ) Args (                       | (i)} #end                                        | δ(q2, (, ()=> (q2, λ)                                   |
+| \*#end } ) Args                         | i)} #end                                         | δ(q2, λ, Args)=> (q2, Exp)                              |
+| \*#end } ) Exp                          | i)} #end                                         | δ(q2, λ, Exp)=> (q2, Id )                               |
+| \*#end } ) Id                           | i)} #end                                         | δ(q2, λ, Id)=> (q1, Letter)                             |
+| \*#end } ) Letter                       | i)} #end                                         | δ(q2, λ, Letter)=> (q2, i)                              |
+| \*#end } )                              | )} #end                                          | δ(q2, i, i)=> (q2, λ)                                   |
+| \*#end } )                              | )} #end                                          | δ(q2, ), ))=> (q2, λ)                                   |
+| \*#end }                                | } #end                                           | δ(q2, }, })=> (q2, λ)                                   |
+| \*#end                                  | #end                                             | δ(q2, #end, #end)=> (q2, λ)                             |
+| \*                                      | λ                                                | δ(q2, λ, \*)=> (q3, λ)                                  |
+| λ                                       | λ                                                | accept                                                  |
