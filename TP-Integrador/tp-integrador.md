@@ -444,12 +444,17 @@ Orden Inverso a la derivación por derecha
   }
 #end
 ```
-
+GIC para ejemplo
+GIC= <ΣN, ΣT, S, P>
+ΣN = {todas las palabras de este ejemplo que empiezan con Mayus} 
+ΣN ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
+S = Prog
+P = {producciones del BNF}
 ```
   δ(q0, λ, λ) => (q1, Z)
-  δ(q1, λ, λ) => (q2, prog)
+  δ(q1, λ, λ) => (q2, Prog)
 
-  δ(q2, λ, prog) => (q2, #start Content #end)
+  δ(q2, λ, Prog) => (q2, #start Content #end)
   δ(q2, λ, Content) => (q2, Statement_list)
   δ(q2, λ, Statement_list) => (q2, Statement)
   δ(q2, λ, Statement) => (q2, Content_no_return)
@@ -488,8 +493,8 @@ Orden Inverso a la derivación por derecha
 | Pila                                   | Cadena                                           | transicion                                              |
 | -------------------------------------- | ------------------------------------------------ | ------------------------------------------------------- |
 | λ                                      | #start loop ( i in range(3) ) { console(i)} #end | δ(q0, λ, λ)=> (q1, Z)                                   |
-| Z                                      | #start loop ( i in range(3) ) { console(i)} #end | δ(q1, λ, λ)=> (q2, prog)                                |
-| Zprog                                  | #start loop ( i in range(3) ) { console(i)} #end | δ(q2, λ, prog)=> (q2, #start Content #end)              |
+| Z                                      | #start loop ( i in range(3) ) { console(i)} #end | δ(q1, λ, λ)=> (q2, Prog)                                |
+| ZProg                                  | #start loop ( i in range(3) ) { console(i)} #end | δ(q2, λ, Prog)=> (q2, #start Content #end)              |
 | Z#end Content #start                   | #start loop ( i in range(3) ) { console(i)} #end | δ(q2, #start , #start)=> (q2, λ)                        |
 | Z#end Content                          | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Content)=> (q2, Statement_list)                |
 | Z#end Statement_list                   | loop ( i in range(3) ) { console(i)} #end        | δ(q2, λ, Statement_list)=> (q2, Statement)              |
