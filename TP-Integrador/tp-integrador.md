@@ -447,7 +447,7 @@ Orden Inverso a la derivación por derecha
 GIC para ejemplo
 GIC= <ΣN, ΣT, S, P>
 ΣN = {todas las palabras de este ejemplo que empiezan con Mayus} 
-ΣN ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
+ΣT ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
 S = Prog
 P = {producciones del BNF}
 ```
