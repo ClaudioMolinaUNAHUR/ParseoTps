@@ -444,12 +444,12 @@ Orden Inverso a la derivación por derecha
   }
 #end
 ```
-GIC para ejemplo
-GIC= <ΣN, ΣT, S, P>
-ΣN = {todas las palabras de este ejemplo que empiezan con Mayus} 
-ΣT ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
-S = Prog
-P = {producciones del BNF}
+## GIC para ejemplo
+* GIC= <ΣN, ΣT, S, P>
+ - ΣN = {todas las palabras de este ejemplo que empiezan con Mayus} 
+ - ΣT ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
+ - S = Prog
+ - P = {producciones del BNF}
 ```
   δ(q0, λ, λ) => (q1, Z)
   δ(q1, λ, λ) => (q2, Prog)
