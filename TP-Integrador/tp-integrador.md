@@ -546,11 +546,9 @@ Orden Inverso a la derivación por derecha
 | Z                                      | λ                                                | δ(q2, λ, Z)=> (q3, λ)                                   |
 | λ                                      | λ                                                | accept                                                  |
 
+# TP 5
 ## Analisis LL(1)
-
-## se reduce el BNF a un GIC mas accesible para el analisis
-
-# Las derivaciones q se sacaron se simulan con Out -> \*
+## se reduce el BNF a un GIC mas accesible para el analisis. Las derivaciones q se sacaron se simulan con Out, OutE ( expresiones ) -> 
 
 cadena
 
