@@ -11,7 +11,7 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'MULTIPLY', 'DIVIDE'),
 )
-#p[0] es el axioma de la gramatica
+#p[0] es el no terminal(lado izq) de la produccion
 #p[1] - p[n] son los simbolos, terminales y no terminales, que componen la produccion
 #las que estan en MAYUS, son terminales (tokens)
 #las que estan en minus, son no terminales (producciones)
@@ -82,12 +82,13 @@ def p_error(p):
 def p_function(p):
     '''function : FUNC ID LPAREN opt_param_list RPAREN LBRACE content RBRACE'''
     p[0] = ('function', p[2], p[4], p[7])
-
+    
 #<function_return>::= func <id> (<param>) : <type> { <content> return <content_return> } 
 #                   | func <id> () : <type> { <content> return <content_return> }
 def p_function_return(p):
     '''function_return : FUNC ID LPAREN opt_param_list RPAREN COLON type LBRACE content RETURN exp RBRACE'''
     p[0] = ('function_return', p[2], p[4], p[7], p[9], p[11])
+    
 #<opt_param_list> ::= <param_list> | <empty>     
 def p_opt_param_list(p):
     '''opt_param_list : param_list

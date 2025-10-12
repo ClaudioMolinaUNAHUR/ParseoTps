@@ -324,7 +324,9 @@ loop(i in range(0, size(precios))) {
 - Modelo secuencial, determinista.
 - No hay concurrencia ni manejo de errores.
 
-# Análisis Sintáctico Descendente (ASD) por izquierda
+# TP3
+
+## Análisis Sintáctico Descendente (ASD) por izquierda
 
 Ejemplo al derivar la cadena
 
@@ -363,7 +365,7 @@ Ejemplo al derivar la cadena
 | #start loop ( i in range(3) ) { console(i) } #end           | id -> i                                  |
 | #start loop ( i in range(3) ) { console(i) } #end           | accept                                   |
 
-# Análisis Sintáctico Ascendente (ASA) por derecha
+## Análisis Sintáctico Ascendente (ASA) por derecha
 
 Ejemplo al derivar la cadena
 
@@ -435,7 +437,7 @@ Orden Inverso a la derivación por derecha
 | #start content #end                                             | prog -> #start content #end              |
 | prog                                                            | accept                                   |
 
-# Análisis Sintáctico Ascendente (ASD) con retroceso
+## Análisis Sintáctico Ascendente (ASD) con retroceso
 
 ```
 #start
@@ -444,12 +446,18 @@ Orden Inverso a la derivación por derecha
   }
 #end
 ```
-## GIC para ejemplo
-* GIC= <ΣN, ΣT, S, P>
- - ΣN = {todas las palabras de este ejemplo que empiezan con Mayus} 
- - ΣT ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
- - S = Prog
- - P = {producciones del BNF}
+
+# TP4
+
+## Automata de Pila para ejemplo
+
+- Pila= <ΣN, ΣT, S, P>
+
+* ΣN = {todas las palabras de este ejemplo que empiezan con Mayus}
+* ΣT ={#start, #end, loop, in, range, console, i, 3, {, }, (, )}
+* S = Prog
+* P = {producciones del BNF}
+
 ```
   δ(q0, λ, λ) => (q1, Z)
   δ(q1, λ, λ) => (q2, Prog)
@@ -537,3 +545,199 @@ Orden Inverso a la derivación por derecha
 | Z#end                                  | #end                                             | δ(q2, #end, #end)=> (q2, λ)                             |
 | Z                                      | λ                                                | δ(q2, λ, Z)=> (q3, λ)                                   |
 | λ                                      | λ                                                | accept                                                  |
+
+## Analisis LL(1)
+
+## se reduce el BNF a un GIC mas accesible para el analisis
+
+# Las derivaciones q se sacaron se simulan con Out -> \*
+
+cadena
+
+```
+#start
+  loop ( i in range(3) ) {
+   console(i)
+  }
+#end
+```
+
+```GIC (reducido)
+Prog -> #start Content #end
+Content -> StatementList
+StatementList -> Statement StatementList | λ
+Statement -> ContentNoReturn | Exp
+
+ContentNoReturn -> Loop | Console | Out
+
+Console -> console(Args)
+
+Loop -> loop ( Id in Range ) { Content }
+Range -> range1(Exp) | range2(Exp, Exp) | range3(Exp, Exp, Exp)
+
+Exp -> Primary_exp | OutE
+
+Primary_exp -> Primitive | Id | ( Exp ) | OutE
+
+Args -> Exp ArgsRest
+ArgsRest -> , Exp ArgsRest | λ
+
+Id -> Letter RestId
+RestId -> Letter RestId | λ
+
+Primitive -> Number | OutE
+Number -> NumberContent | -NumberContent
+NumberContent -> Int NumRest | OutE
+NumRest -> Int NumRest | λ
+
+Letter -> a | i
+Int -> 0 | 3
+
+OutE -> outE
+Out -> out
+```
+
+| PRIM                                                                   |
+| ---------------------------------------------------------------------- |
+| PRIM(PROG) = { #start }                                                |
+| PRIM(Content) = { loop, console, out, 0, 3, -, outE, a, i, (, λ}       |
+| PRIM(StatementList) = { loop, console, out, 0, 3, -, outE, a, i, (, λ} |
+| PRIM(Statement) = { loop, console, out, 0, 3, -, outE, a, i, ( }       |
+| PRIM(ContentNoReturn) = { loop, console, out }                         |
+| PRIM(Console) = { console }                                            |
+| PRIM(Loop) = { loop }                                                  |
+| PRIM(Range) = { range1, range2, range3 }                               |
+| PRIM(Exp) = {0, 3, -, outE, a, i, (}                                   |
+| PRIM(Primary_exp) = {0, 3, outE, a, i, (}                              |
+| PRIM(Args) = {0, 3, -, outE, a, i, (}                                  |
+| PRIM(ArgsRest) = {",", λ}                                              |
+| PRIM(Id) = { a, i}                                                     |
+| PRIM(RestId) = { a, i, λ }                                             |
+| PRIM(Primitive) = { 0, 3, -}                                           |
+| PRIM(Number) = { 0, 3, -}                                              |
+| PRIM(NumberContent) = { 0, 3}                                          |
+| PRIM(NumRest) = { 0, 3, λ}                                             |
+| PRIM(Letter) = { a, i}                                                 |
+| PRIM(Int) = { 0, 3 }                                                   |
+| PRIM(OutE) = { outE }                                                  |
+| PRIM(Out) = { out }                                                    |
+
+| SIG                                                                    |
+| ---------------------------------------------------------------------- |
+| SIG(PROG) = {$, loop, console, out, 0, 3, -, outE, a, i, (, #end }     |
+| SIG(Content) = { #end, } }                                             |
+| SIG(StatementList) = {#end, } }                                        |
+| SIG(Statement) = { loop, console, out, 0, 3, -, outE, a, i, ( }        |
+| SIG(ContentNoReturn) = { loop, console, out, 0, 3, -, outE, a, i, (, } |
+| SIG(Console) = { loop, console, out, 0, 3, -, outE, a, i, (, }         |
+| SIG(Loop) = { loop, console, out, 0, 3, -, outE, a, i, (, }            |
+| SIG(Range) = { ) { }                                                   |
+| SIG(Exp) = { ), ",", }                                                 |
+| SIG(Primary_exp) = { ), ",", }                                         |
+| SIG(Args) = { ) }                                                      |
+| SIG(ArgsRest) = { ) }                                                  |
+| SIG(Id) = { in, (, -, 0, 3, outE}                                      |
+| SIG(RestId) = { in, (, -, 0, 3, outE}                                  |
+| SIG(Primitive) = { ), ",", }                                           |
+| SIG(Number) = { ), ",", }                                              |
+| SIG(NumberContent) = { ), ",", }                                       |
+| SIG(NumRest) = { ), ",", }                                             |
+| SIG(Int) = { ), ",", }                                                 |
+| SIG(Letter) = { in, (, -, 0, 3, outE}                                  |
+| SIG(OutE) = { in, (, -, 0, 3, outE}                                    |
+| SIG(Out) = { ), ",", }                                                 |
+
+| PRED                                                                                            |
+| ----------------------------------------------------------------------------------------------- |
+| PRED(Prog -> #start Content #end) = {#start}                                                    |
+| PRED(Content -> StatementList) = { loop, console, out, 0, 3, -, outE, a, i, (, #end}            |
+| PRED(StatementList -> Statement StatementList) = { loop, console, out, 0, 3, -, outE, a, i, ( } |
+| PRED(StatementList -> λ) = {#end, } }                                                           |
+| PRED(Statement -> ContentNoReturn) = { loop, console, out }                                     |
+| PRED(Statement -> Exp) = {0, 3, -, outE, a, i, (}                                               |
+| PRED(ContentNoReturn -> Loop) = { loop }                                                        |
+| PRED(ContentNoReturn -> Console) = { console }                                                  |
+| PRED(ContentNoReturn -> Out) = { out }                                                          |
+| PRED(Console -> console(Args)) = { console }                                                    |
+| PRED(Loop -> loop ( Id in Range ) { Content }) = { loop }                                       |
+| PRED(Range -> range1(Exp)) = { range1 }                                                         |
+| PRED(Range -> range2(Exp, Exp)) = { range2 }                                                    |
+| PRED(Range -> range3(Exp, Exp, Exp)) = { range3 }                                               |
+| PRED(Exp -> Primary_exp) = {0, 3, outE, a, i, (}                                                |
+| PRED(Exp -> OutE) = { outE }                                                                    |
+| PRED(Primary_exp -> Primitive) = {0, 3, outE, a, i, (}                                          |
+| PRED(Primary_exp -> Id) = { a, i, outE}                                                         |
+| PRED(Primary_exp -> ( Exp )) = { ( }                                                            |
+| PRED(Primary_exp -> OutE) = { outE}                                                             |
+| PRED(Args -> Exp) = {0, 3, -, outE, a, i, (}                                                    |
+| PRED(ArgsRest -> , Exp ArgsRest) = {","}                                                        |
+| PRED(ArgsRest -> λ) = { ) }                                                                     |
+| PRED(Primitive -> Number) = { 0, 3, -}                                                          |
+| PRED(Primitive -> OutE) = { outE }                                                              |
+| PRED(Number -> NumberContent) = { 0, 3 }                                                        |
+| PRED(Number -> -NumberContent) = { - }                                                          |
+| PRED(NumberContent -> Int NumRest) = { 0, 3, λ}                                                 |
+| PRED(NumRest -> Int NumRest) = { 0, 3 }                                                         |
+| PRED(NumRest -> λ) = { ), ",", }                                                                |
+| PRED(Id -> Letter RestId ) = { a, i }                                                           |
+| PRED(RestId -> Id RestId ) = { a, i }                                                           |
+| PRED(RestId -> λ ) = { in, (, -, 0, 3, outE}                                                    |
+| PRED(Letter -> a) = { a }                                                                       |
+| PRED(Letter -> i) = { i }                                                                       |
+| PRED(Int -> 0) = { 0 }                                                                          |
+| PRED(Int -> 3) = { 3 }                                                                          |
+| PRED(OutE -> outE) = { outE }                                                                   |
+| PRED(Out -> out) = { out }                                                                      |
+
+# Predicción de ASDP LL(1)
+
+| Pila                                                      | Cadena                                              | Regla o Acción                           |
+| --------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------- |
+| $                                                         | #start loop ( i in range1(3) ) { console(i)} #end $ | Prog -> #start Content #end              |
+| $ #end Content #start                                     | #start loop ( i in range1(3) ) { console(i)} #end $ | Emparejar(#start)                        |
+| $ #end Content                                            | loop ( i in range1(3) ) { console(i)} #end $        | Content -> StatementList                 |
+| $ #end StatementList                                      | loop ( i in range1(3) ) { console(i)} #end $        | StatementList -> Statement StatementList |
+| $ #end StatementList Statement                            | loop ( i in range1(3) ) { console(i)} #end $        | Statement -> ContentNoReturn             |
+| $ #end StatementList ContentNoReturn                      | loop ( i in range1(3) ) { console(i)} #end $        | ContentNoReturn -> Loop                  |
+| $ #end StatementList Loop                                 | loop ( i in range1(3) ) { console(i)} #end $        | Loop -> loop ( Id in Range ) { Content } |
+| $ #end StatementList } Content { ) Range in Id ( loop     | loop ( i in range1(3) ) { console(i)} #end $        | Emparejar(loop)                          |
+| $ #end StatementList } Content { ) Range in Id (          | (i in range1(3) ) { console(i)} #end $              | Emparejar(()                             |
+| $ #end StatementList } Content { ) Range in Id            | i in range1(3) ) { console(i)} #end $               | Id -> Letter RestId                      |
+| $ #end StatementList } Content { ) Range in RestId Letter | i in range1(3) ) { console(i)} #end $               | Letter -> i                              |
+| $ #end StatementList } Content { ) Range in RestId i      | i in range1(3) ) { console(i)} #end $               | Emparejar(i)                             |
+| $ #end StatementList } Content { ) Range in RestId        | in range1(3) ) { console(i)} #end $                 | RestId -> λ                              |
+| $ #end StatementList } Content { ) Range in               | in range1(3) ) { console(i)} #end $                 | Emparejar(in)                            |
+| $ #end StatementList } Content { ) Range                  | range1(3) ) { console(i)} #end $                    | Range -> range1(Exp)                     |
+| $ #end StatementList } Content { ) ) Exp ( range1         | range1(3) ) { console(i)} #end $                    | Emparejar(range1)                        |
+| $ #end StatementList } Content { ) ) Exp (                | (3) ) { console(i)} #end $                          | Emparejar(()                             |
+| $ #end StatementList } Content { ) ) Exp                  | 3) ) { console(i)} #end $                           | Exp -> Primary_exp                       |
+| $ #end StatementList } Content { ) ) Primary_exp          | 3) ) { console(i)} #end $                           | Primary_exp -> Primitive                 |
+| $ #end StatementList } Content { ) ) Primitive            | 3) ) { console(i)} #end $                           | Primitive -> Number                      |
+| $ #end StatementList } Content { ) ) Number               | 3) ) { console(i)} #end $                           | Number -> NumberContent                  |
+| $ #end StatementList } Content { ) ) NumberContent        | 3) ) { console(i)} #end $                           | NumberContent -> Int NumRest             |
+| $ #end StatementList } Content { ) ) NumRest Int          | 3) ) { console(i)} #end $                           | Int -> 3                                 |
+| $ #end StatementList } Content { ) ) NumRest 3            | 3) ) { console(i)} #end $                           | Emparejar(3)                             |
+| $ #end StatementList } Content { ) ) NumRest              | ) ) { console(i)} #end $                            | NumRest -> λ                             |
+| $ #end StatementList } Content { )                        | ) { console(i)} #end $                              | Emparejar())                             |
+| $ #end StatementList } Content {                          | { console(i)} #end $                                | Emparejar({)                             |
+| $ #end StatementList } Content                            | console(i)} #end $                                  | Content -> StatementList                 |
+| $ #end StatementList } StatementList                      | console(i)} #end $                                  | StatementList -> Statement StatementList |
+| $ #end StatementList } StatementList Statement            | console(i)} #end $                                  | Content -> StatementList                 |
+| $ #end StatementList } StatementList StatementList        | console(i)} #end $                                  | Statement -> ContentNoReturn             |
+| $ #end StatementList } StatementList ContentNoReturn      | console(i)} #end $                                  | ContentNoReturn -> Console               |
+| $ #end StatementList } StatementList Console              | console(i)} #end $                                  | Console -> console(Args)                 |
+| $ #end StatementList } StatementList ) Args ( console     | console(i)} #end $                                  | Emparejar(console)                       |
+| $ #end StatementList } StatementList ) Args (             | (i)} #end $                                         | Emparejar(()                             |
+| $ #end StatementList } StatementList ) Args               | i)} #end $                                          | Args -> Exp                              |
+| $ #end StatementList } StatementList ) Exp                | i)} #end $                                          | Exp -> Primary_exp                       |
+| $ #end StatementList } StatementList ) Primary_exp        | i)} #end $                                          | Primary_exp -> Id                        |
+| $ #end StatementList } StatementList ) Id                 | i)} #end $                                          | Id -> Letter RestId                      |
+| $ #end StatementList } StatementList ) RestId Letter      | i)} #end $                                          | Letter -> i                              |
+| $ #end StatementList } StatementList ) RestId i           | i)} #end $                                          | Emparejar(i)                             |
+| $ #end StatementList } StatementList ) RestId             | )} #end $                                           | RestId -> λ                              |
+| $ #end StatementList } StatementList )                    | )} #end $                                           | Emparejar())                             |
+| $ #end StatementList } StatementList                      | } #end $                                            | StatementList -> λ                       |
+| $ #end StatementList }                                    | } #end $                                            | Emparejar(})                             |
+| $ #end StatementList                                      | #end $                                              | StatementList -> λ                       |
+| $ #end                                                    | #end $                                              | Emparejar(#end)                          |
+| $                                                         | $                                                   | accept                                   |

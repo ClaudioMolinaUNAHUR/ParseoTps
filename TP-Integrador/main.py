@@ -159,6 +159,12 @@ def main():
     
     print(f"--- Manehjo de Errores ---\n")
     test_sintaxis_error()
+    # code = """
+    # num x: 10
+    # 2 + x
+    # console(x)
+    # """
+    # run_test("simple", code)
 
 
 if __name__ == "__main__":
