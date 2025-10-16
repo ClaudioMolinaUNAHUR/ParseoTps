@@ -547,8 +547,10 @@ Orden Inverso a la derivación por derecha
 | λ                                      | λ                                                | accept                                                  |
 
 # TP 5
+
 ## Analisis LL(1)
-## se reduce el BNF a un GIC mas accesible para el analisis. Las derivaciones q se sacaron se simulan con Out, OutE ( expresiones ) -> 
+
+## se reduce el BNF a un GIC mas accesible para el analisis. Las derivaciones q se sacaron se simulan con Out, OutE ( expresiones ) ->
 
 cadena
 
@@ -739,3 +741,90 @@ Out -> out
 | $ #end StatementList                                      | #end $                                              | StatementList -> λ                       |
 | $ #end                                                    | #end $                                              | Emparejar(#end)                          |
 | $                                                         | $                                                   | accept                                   |
+
+# TP 6
+## ASA con retroceso
+```
+  δ(q0, λ, λ) => (q1, Z)
+
+  δ(q1, λ, #start Content #end) => (q1, Prog)
+  δ(q1, λ, Statement_list) => (q1, Content)
+  δ(q1, λ, Statement) => (q1, Statement_list)
+  δ(q1, λ, Content_no_return) => (q1, Statement)
+  δ(q2, λ, Console) => (q2, Content_no_return)
+  δ(q2, λ, Loop) => (q2, Content_no_return)
+  δ(q1, λ, loop ( Id in Range ) { Content }) => (q1, Loop)
+  δ(q1, λ, Letter) => (q1, Id)
+  δ(q1, λ, i) => (q1, Letter)
+  δ(q1, λ, range(Exp)) => (q1, Range)
+  δ(q1, λ, Primary_exp) => (q1, Exp)
+  δ(q1, λ, Primitive) => (q1, Primary_exp)
+  δ(q1, λ, Number) => (q1, Primitive)
+  δ(q1, λ, Number_content) => (q1, Number)
+  δ(q1, λ, Int) => (q1, Number_content)
+  δ(q1, λ, 3) => (q1, Int)
+  δ(q1, λ, console(Args)) => (q1, Console)
+  δ(q1, λ, Exp) => (q1, Args)
+
+  δ(q1, #start, λ) => (q1, #start)
+  δ(q1, #end, λ) => (q1, #end)
+  δ(q1, loop, λ) => (q1, loop)
+  δ(q1, (, λ) => (q1, ()
+  δ(q1, in, λ) => (q1, in)
+  δ(q1, ), λ) => (q1, ))
+  δ(q1, i, λ) => (q1, i)
+  δ(q1, 3, λ) => (q1, 3)
+  δ(q1, console, λ) => (q1, console)
+  δ(q1, range, λ) => (q1, range)
+  δ(q1, {, λ) => (q1, {)
+  δ(q1, }, λ) => (q1, })
+
+  δ(q1, λ, Prog) => (q2, λ)
+  δ(q2, λ, Z) => (q3, λ)
+```
+
+| Pila                                             | Cadena                                           | Transición                |
+| ------------------------------------------------ | ------------------------------------------------ | ------------------------- |
+| λ                                                | #start loop ( i in range(3) ) { console(i)} #end | δ(q0, λ, λ) => (q1, Z)    |
+| Z                                                | #start loop ( i in range(3) ) { console(i)} #end | shift                     |
+| Z#start                                          | loop ( i in range(3) ) { console(i)} #end        | shift                     |
+| Z#start loop                                     | ( i in range(3) ) { console(i)} #end             | shift                     |
+| Z#start loop (                                   | i in range(3) ) { console(i)} #end               | shift                     |
+| Z#start loop ( i                                 | in range(3) ) { console(i)} #end                 | shift                     |
+| Z#start loop ( Letter                            | in range(3) ) { console(i)} #end                 | reduce                    |
+| Z#start loop ( Id                                | in range(3) ) { console(i)} #end                 | reduce                    |
+| Z#start loop ( Id in                             | range(3) ) { console(i)} #end                    | shift                     |
+| Z#start loop ( Id in range                       | (3) ) { console(i)} #end                         | shift                     |
+| Z#start loop ( Id in range(                      | 3) ) { console(i)} #end                          | shift                     |
+| Z#start loop ( Id in range(3                     | ) ) { console(i)} #end                           | shift                     |
+| Z#start loop ( Id in range(Int                   | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in range(Number_content        | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in range(Number                | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in range(Primitive             | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in range(Primary_exp           | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in range(Exp                   | ) ) { console(i)} #end                           | reduce                    |
+| Z#start loop ( Id in Range                       | ) { console(i)} #end                             | shift                     |
+| Z#start loop ( Id in Range )                     | { console(i)} #end                               | shift                     |
+| Z#start loop ( Id in Range ) {                   | console(i)} #end                                 | shift                     |
+| Z#start loop ( Id in Range ) { console           | (i)} #end                                        | shift                     |
+| Z#start loop ( Id in Range ) { console(          | i)} #end                                         | shift                     |
+| Z#start loop ( Id in Range ) { console(Letter    | )} #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Id        | )} #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Exp       | )} #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Args      | )} #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Args)     | #end                                             | shift                     |
+| Z#start loop ( Id in Range ) { Console           | #end                                             | reduce                    |
+| Z#start loop ( Id in Range ) { Content_no_return | #end                                             | reduce                    |
+| Z#start loop ( Id in Range ) { Statement         | #end                                             | reduce                    |
+| Z#start loop ( Id in Range ) { Statement_list    | #end                                             | reduce                    |
+| Z#start loop ( Id in Range ) { Content           | #end                                             | shift                     |
+| Z#start loop ( Id in Range ) { Content }         | #end                                             | reduce                    |
+| Z#start Loop                                     | #end                                             | reduce                    |
+| Z#start Content_no_return                        | #end                                             | reduce                    |
+| Z#start Statement                                | #end                                             | reduce                    |
+| Z#start Statement_list                           | #end                                             | reduce                    |
+| Z#start Content                                  | #end                                             | shift                     |
+| Z#start Content #end                             | λ                                                | reduce                    |
+| ZProg                                            | λ                                                | δ(q1, λ, Prog) => (q2, λ) |
+| Z                                                | λ                                                | δ(q2, λ, Z) => (q3, λ)    |
+| λ                                                | λ                                                | accept                    |
