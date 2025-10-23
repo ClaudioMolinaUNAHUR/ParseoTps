@@ -847,19 +847,22 @@ cadena
 
 ## Tabla de tipos (TT)
 
-| Linea PRG | Cod | Nombre | TipoBase | Padre | Dimensión | Mínimo | Máximo | Ámbito | Observaciones                |
-| --------- | --- | ------ | -------- | ----- | --------- | ------ | ------ | ------ | ---------------------------- |
-| L1        | 0   | num    | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
-| L1        | 1   | bool   | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
-| L1        | 2   | str    | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
-| L5        |     |        |          |       |           |        |        |        | Se eliminan todas las lineas |
+| Linea PRG | Cod | Nombre                              | TipoBase | Padre | Dimensión | Mínimo | Máximo | Ámbito | Observaciones                |
+| --------- | --- | ----------------------------------- | -------- | ----- | --------- | ------ | ------ | ------ | ---------------------------- |
+| L1        | 0   | num                                 | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 1   | bool                                | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 2   | str                                 | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 3   | void                                | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 4   | iterable                            | -1       | -1    | -1        | -1     | -1     | 0      | primitivo                    |
+| L1        | 5   | any(str, bool, num, void, iterable) | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L5        |     |                                     |          |       |           |        |        |        | Se eliminan todas las lineas |
 
 ## Tabla de Símbolos (TS)
 
-| Linea PRG | Cod | Nombre  | Categoria    | Tipo | NumPar | ListaPar | Ámbito | Obervaciones                 |
-| --------- | --- | ------- | ------------ | ---- | ------ | -------- | ------ | ---------------------------- |
-| L2        | 0   | i       | var          | 0    | null   | null     | 1      |                              |
-| L2        | 1   | range   | range_func   | 0    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
-| L3        | 2   | console | console_func | 2    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
-| L4        |     |         |              |      |        |          |        | Se elimina Cod 1,2,3         |
-| L5        |     |         |              |      |        |          |        | Se eliminan todas las lineas |
+| Linea PRG | Cod | Nombre  | Categoria | Tipo | NumParMin | NumParMax | ListaPar  | Ámbito | Obervaciones                    |
+| --------- | --- | ------- | --------- | ---- | --------- | --------- | --------- | ------ | ------------------------------- |
+| L1        | 0   | range   | func      | 4    | 1         | 3         | [0, 0, 0] | 0      | Built-in. De 1 a 3 params num   |
+| L1        | 1   | console | func      | 3    | 0         | -1        | [5]       | 0      | Built-in. NumPar (-1), tipo any |
+| L2        | 2   | i       | var       | 0    | null      | null      | null      | 1      |                                 |
+| L4        |     |         |           |      |           |           |           |        | Se elimina Cod 2                |
+| L5        |     |         |           |      |           |           |           |        | Se eliminan todas las lineas    |
