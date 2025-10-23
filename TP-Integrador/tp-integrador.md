@@ -860,6 +860,6 @@ cadena
 | --------- | --- | ------- | ------------ | ---- | ------ | -------- | ------ | ---------------------------- |
 | L2        | 0   | i       | var          | 0    | null   | null     | 1      |                              |
 | L2        | 1   | range   | range_func   | 0    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
-| L3        | 2   | console | console_func | 0    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
+| L3        | 2   | console | console_func | 2    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
 | L4        |     |         |              |      |        |          |        | Se elimina Cod 1,2,3         |
 | L5        |     |         |              |      |        |          |        | Se eliminan todas las lineas |
