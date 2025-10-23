@@ -743,7 +743,9 @@ Out -> out
 | $                                                         | $                                                   | accept                                   |
 
 # TP 6
+
 ## ASA con retroceso
+
 ```
   δ(q0, λ, λ) => (q1, Z)
 
@@ -828,3 +830,36 @@ Out -> out
 | ZProg                                            | λ                                                | δ(q1, λ, Prog) => (q2, λ) |
 | Z                                                | λ                                                | δ(q2, λ, Z) => (q3, λ)    |
 | λ                                                | λ                                                | accept                    |
+
+# TP 7
+
+## Analisis TT y TS
+
+cadena
+
+```
+1: #start
+2:   loop ( i in range(3) ) {
+3:    console(i)
+4:   }
+5: #end
+```
+
+## Tabla de tipos (TT)
+
+| Linea PRG | Cod | Nombre | TipoBase | Padre | Dimensión | Mínimo | Máximo | Ámbito | Observaciones                |
+| --------- | --- | ------ | -------- | ----- | --------- | ------ | ------ | ------ | ---------------------------- |
+| L1        | 0   | num    | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 1   | bool   | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L1        | 2   | str    | -1       | -1    | 1         | -1     | -1     | 0      | primitivo                    |
+| L5        |     |        |          |       |           |        |        |        | Se eliminan todas las lineas |
+
+## Tabla de Símbolos (TS)
+
+| Linea PRG | Cod | Nombre  | Categoria    | Tipo | NumPar | ListaPar | Ámbito | Obervaciones                 |
+| --------- | --- | ------- | ------------ | ---- | ------ | -------- | ------ | ---------------------------- |
+| L2        | 0   | i       | var          | 0    | null   | null     | 1      |                              |
+| L2        | 1   | range   | range_func   | 0    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
+| L3        | 2   | console | console_func | 0    | 1      | [0]      | 1      | [0] referencia a Cod de TS   |
+| L4        |     |         |              |      |        |          |        | Se elimina Cod 1,2,3         |
+| L5        |     |         |              |      |        |          |        | Se eliminan todas las lineas |
