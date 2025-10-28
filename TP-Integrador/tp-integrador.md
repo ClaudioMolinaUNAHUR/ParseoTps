@@ -722,6 +722,7 @@ Out -> out
 | $ #end StatementList Block ) ) NumRest Int            | 3) ) { console(i) } #end $                           | Int -> 3                                 |
 | $ #end StatementList Block ) ) NumRest 3              | 3) ) { console(i) } #end $                           | Emparejar(3)                             |
 | $ #end StatementList Block ) ) NumRest                | ) ) { console(i) } #end $                            | NumRest -> λ                             |
+| $ #end StatementList Block ) )                        | ) ) { console(i) } #end $                            | Emparejar())                             |
 | $ #end StatementList Block )                          | ) { console(i) } #end $                              | Emparejar())                             |
 | $ #end StatementList Block                            | { console(i) } #end $                                | Block -> { Content }                     |
 | $ #end StatementList } Content {                      | { console(i) } #end $                                | Emparejar({)                             |
