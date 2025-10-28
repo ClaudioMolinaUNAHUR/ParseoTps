@@ -539,8 +539,8 @@ Orden Inverso a la derivación por derecha
 | Z#end } ) Exp                          | i) } #end                                         | δ(q2, λ, Exp)=> (q2, Id )                               |
 | Z#end } ) Id                           | i) } #end                                         | δ(q2, λ, Id)=> (q1, Letter)                             |
 | Z#end } ) Letter                       | i) } #end                                         | δ(q2, λ, Letter)=> (q2, i)                              |
-| Z#end } )                              | ) } #end                                           | δ(q2, i, i)=> (q2, λ)                                   |
-| Z#end } )                              | ) } #end                                           | δ(q2, ), ))=> (q2, λ)                                   |
+| Z#end } )                              | ) } #end                                          | δ(q2, i, i)=> (q2, λ)                                   |
+| Z#end } )                              | ) } #end                                          | δ(q2, ), ))=> (q2, λ)                                   |
 | Z#end }                                | } #end                                            | δ(q2, }, })=> (q2, λ)                                   |
 | Z#end                                  | #end                                              | δ(q2, #end, #end)=> (q2, λ)                             |
 | Z                                      | λ                                                 | δ(q2, λ, Z)=> (q3, λ)                                   |
@@ -572,7 +572,8 @@ ContentNoReturn -> Loop | Console | Out
 
 Console -> console(Args)
 
-Loop -> loop ( Id in Range ) { Content }
+Loop -> loop ( Id in Range ) Block
+Block -> { Content }
 Range -> range1(Exp) | range2(Exp, Exp) | range3(Exp, Exp, Exp)
 
 Exp -> Primary_exp | OutE
@@ -606,6 +607,7 @@ Out -> out
 | PRIM(ContentNoReturn) = { loop, console, out }                         |
 | PRIM(Console) = { console }                                            |
 | PRIM(Loop) = { loop }                                                  |
+| PRIM(Block) = { { }                                                    |
 | PRIM(Range) = { range1, range2, range3 }                               |
 | PRIM(Exp) = {0, 3, -, outE, a, i, (}                                   |
 | PRIM(Primary_exp) = {0, 3, outE, a, i, (}                              |
@@ -631,7 +633,8 @@ Out -> out
 | SIG(ContentNoReturn) = { loop, console, out, 0, 3, -, outE, a, i, (, } |
 | SIG(Console) = { loop, console, out, 0, 3, -, outE, a, i, (, }         |
 | SIG(Loop) = { loop, console, out, 0, 3, -, outE, a, i, (, }            |
-| SIG(Range) = { ) { }                                                   |
+| SIG(Range) = { ) }                                                     |
+| SIG(Block) = { loop, console, out, 0, 3, -, outE, a, i, (, }           |
 | SIG(Exp) = { ), ",", }                                                 |
 | SIG(Primary_exp) = { ), ",", }                                         |
 | SIG(Args) = { ) }                                                      |
@@ -647,100 +650,102 @@ Out -> out
 | SIG(OutE) = { in, (, -, 0, 3, outE}                                    |
 | SIG(Out) = { ), ",", }                                                 |
 
-| PRED                                                                                            |
-| ----------------------------------------------------------------------------------------------- |
-| PRED(Prog -> #start Content #end) = {#start}                                                    |
-| PRED(Content -> StatementList) = { loop, console, out, 0, 3, -, outE, a, i, (, #end}            |
-| PRED(StatementList -> Statement StatementList) = { loop, console, out, 0, 3, -, outE, a, i, ( } |
-| PRED(StatementList -> λ) = {#end, } }                                                           |
-| PRED(Statement -> ContentNoReturn) = { loop, console, out }                                     |
-| PRED(Statement -> Exp) = {0, 3, -, outE, a, i, (}                                               |
-| PRED(ContentNoReturn -> Loop) = { loop }                                                        |
-| PRED(ContentNoReturn -> Console) = { console }                                                  |
-| PRED(ContentNoReturn -> Out) = { out }                                                          |
-| PRED(Console -> console(Args)) = { console }                                                    |
-| PRED(Loop -> loop ( Id in Range ) { Content }) = { loop }                                       |
-| PRED(Range -> range1(Exp)) = { range1 }                                                         |
-| PRED(Range -> range2(Exp, Exp)) = { range2 }                                                    |
-| PRED(Range -> range3(Exp, Exp, Exp)) = { range3 }                                               |
-| PRED(Exp -> Primary_exp) = {0, 3, outE, a, i, (}                                                |
-| PRED(Exp -> OutE) = { outE }                                                                    |
-| PRED(Primary_exp -> Primitive) = {0, 3, outE, a, i, (}                                          |
-| PRED(Primary_exp -> Id) = { a, i, outE}                                                         |
-| PRED(Primary_exp -> ( Exp )) = { ( }                                                            |
-| PRED(Primary_exp -> OutE) = { outE}                                                             |
-| PRED(Args -> Exp) = {0, 3, -, outE, a, i, (}                                                    |
-| PRED(ArgsRest -> , Exp ArgsRest) = {","}                                                        |
-| PRED(ArgsRest -> λ) = { ) }                                                                     |
-| PRED(Primitive -> Number) = { 0, 3, -}                                                          |
-| PRED(Primitive -> OutE) = { outE }                                                              |
-| PRED(Number -> NumberContent) = { 0, 3 }                                                        |
-| PRED(Number -> -NumberContent) = { - }                                                          |
-| PRED(NumberContent -> Int NumRest) = { 0, 3, λ}                                                 |
-| PRED(NumRest -> Int NumRest) = { 0, 3 }                                                         |
-| PRED(NumRest -> λ) = { ), ",", }                                                                |
-| PRED(Id -> Letter RestId ) = { a, i }                                                           |
-| PRED(RestId -> Id RestId ) = { a, i }                                                           |
-| PRED(RestId -> λ ) = { in, (, -, 0, 3, outE}                                                    |
-| PRED(Letter -> a) = { a }                                                                       |
-| PRED(Letter -> i) = { i }                                                                       |
-| PRED(Int -> 0) = { 0 }                                                                          |
-| PRED(Int -> 3) = { 3 }                                                                          |
-| PRED(OutE -> outE) = { outE }                                                                   |
-| PRED(Out -> out) = { out }                                                                      |
+| cod | PRED                                                                                            |
+| --- | ----------------------------------------------------------------------------------------------- |
+| 1   | PRED(Prog -> #start Content #end) = {#start}                                                    |
+| 2   | PRED(Content -> StatementList) = { loop, console, out, 0, 3, -, outE, a, i, (, #end}            |
+| 3   | PRED(StatementList -> Statement StatementList) = { loop, console, out, 0, 3, -, outE, a, i, ( } |
+| 4   | PRED(StatementList -> λ) = {#end, } }                                                           |
+| 5   | PRED(Statement -> ContentNoReturn) = { loop, console, out }                                     |
+| 6   | PRED(Statement -> Exp) = {0, 3, -, outE, a, i, (}                                               |
+| 7   | PRED(ContentNoReturn -> Loop) = { loop }                                                        |
+| 8   | PRED(ContentNoReturn -> Console) = { console }                                                  |
+| 9   | PRED(ContentNoReturn -> Out) = { out }                                                          |
+| 10  | PRED(Console -> console(Args)) = { console }                                                    |
+| 11  | PRED(Loop -> loop ( Id in Range ) Block) = { loop }                                             |
+| 12  | PRED(Range -> range1(Exp)) = { range1 }                                                         |
+| 13  | PRED(Range -> range2(Exp, Exp)) = { range2 }                                                    |
+| 14  | PRED(Range -> range3(Exp, Exp, Exp)) = { range3 }                                               |
+| 15  | PRED(Exp -> Primary_exp) = {0, 3, outE, a, i, (}                                                |
+| 16  | PRED(Exp -> OutE) = { outE }                                                                    |
+| 17  | PRED(Primary_exp -> Primitive) = {0, 3, outE, a, i, (}                                          |
+| 18  | PRED(Primary_exp -> Id) = { a, i, outE}                                                         |
+| 19  | PRED(Primary_exp -> ( Exp )) = { ( }                                                            |
+| 20  | PRED(Primary_exp -> OutE) = { outE}                                                             |
+| 21  | PRED(Args -> Exp) = {0, 3, -, outE, a, i, (}                                                    |
+| 22  | PRED(ArgsRest -> , Exp ArgsRest) = {","}                                                        |
+| 23  | PRED(ArgsRest -> λ) = { ) }                                                                     |
+| 24  | PRED(Primitive -> Number) = { 0, 3, -}                                                          |
+| 25  | PRED(Primitive -> OutE) = { outE }                                                              |
+| 26  | PRED(Number -> NumberContent) = { 0, 3 }                                                        |
+| 27  | PRED(Number -> -NumberContent) = { - }                                                          |
+| 28  | PRED(NumberContent -> Int NumRest) = { 0, 3, λ}                                                 |
+| 29  | PRED(NumRest -> Int NumRest) = { 0, 3 }                                                         |
+| 30  | PRED(NumRest -> λ) = { ), ",", }                                                                |
+| 31  | PRED(Id -> Letter RestId ) = { a, i }                                                           |
+| 32  | PRED(RestId -> Letter RestId ) = { a, i }                                                       |
+| 33  | PRED(RestId -> λ ) = { in, (, -, 0, 3, outE}                                                    |
+| 34  | PRED(Letter -> a) = { a }                                                                       |
+| 35  | PRED(Letter -> i) = { i }                                                                       |
+| 36  | PRED(Int -> 0) = { 0 }                                                                          |
+| 37  | PRED(Int -> 3) = { 3 }                                                                          |
+| 38  | PRED(OutE -> outE) = { outE }                                                                   |
+| 39  | PRED(Out -> out) = { out }                                                                      |
+| 40  | PRED(Block -> { Content }) = { { }                                                              |
 
 # Predicción de ASDP LL(1)
 
-| Pila                                                      | Cadena                                               | Regla o Acción                           |
-| --------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
-| $                                                         | #start loop ( i in range1(3) ) { console(i) } #end $ | Prog -> #start Content #end              |
-| $ #end Content #start                                     | #start loop ( i in range1(3) ) { console(i) } #end $ | Emparejar(#start)                        |
-| $ #end Content                                            | loop ( i in range1(3) ) { console(i) } #end $        | Content -> StatementList                 |
-| $ #end StatementList                                      | loop ( i in range1(3) ) { console(i) } #end $        | StatementList -> Statement StatementList |
-| $ #end StatementList Statement                            | loop ( i in range1(3) ) { console(i) } #end $        | Statement -> ContentNoReturn             |
-| $ #end StatementList ContentNoReturn                      | loop ( i in range1(3) ) { console(i) } #end $        | ContentNoReturn -> Loop                  |
-| $ #end StatementList Loop                                 | loop ( i in range1(3) ) { console(i) } #end $        | Loop -> loop ( Id in Range ) { Content } |
-| $ #end StatementList } Content { ) Range in Id ( loop     | loop ( i in range1(3) ) { console(i) } #end $        | Emparejar(loop)                          |
-| $ #end StatementList } Content { ) Range in Id (          | (i in range1(3) ) { console(i) } #end $              | Emparejar(()                             |
-| $ #end StatementList } Content { ) Range in Id            | i in range1(3) ) { console(i) } #end $               | Id -> Letter RestId                      |
-| $ #end StatementList } Content { ) Range in RestId Letter | i in range1(3) ) { console(i) } #end $               | Letter -> i                              |
-| $ #end StatementList } Content { ) Range in RestId i      | i in range1(3) ) { console(i) } #end $               | Emparejar(i)                             |
-| $ #end StatementList } Content { ) Range in RestId        | in range1(3) ) { console(i) } #end $                 | RestId -> λ                              |
-| $ #end StatementList } Content { ) Range in               | in range1(3) ) { console(i) } #end $                 | Emparejar(in)                            |
-| $ #end StatementList } Content { ) Range                  | range1(3) ) { console(i) } #end $                    | Range -> range1(Exp)                     |
-| $ #end StatementList } Content { ) ) Exp ( range1         | range1(3) ) { console(i) } #end $                    | Emparejar(range1)                        |
-| $ #end StatementList } Content { ) ) Exp (                | (3) ) { console(i) } #end $                          | Emparejar(()                             |
-| $ #end StatementList } Content { ) ) Exp                  | 3) ) { console(i) } #end $                           | Exp -> Primary_exp                       |
-| $ #end StatementList } Content { ) ) Primary_exp          | 3) ) { console(i) } #end $                           | Primary_exp -> Primitive                 |
-| $ #end StatementList } Content { ) ) Primitive            | 3) ) { console(i) } #end $                           | Primitive -> Number                      |
-| $ #end StatementList } Content { ) ) Number               | 3) ) { console(i) } #end $                           | Number -> NumberContent                  |
-| $ #end StatementList } Content { ) ) NumberContent        | 3) ) { console(i) } #end $                           | NumberContent -> Int NumRest             |
-| $ #end StatementList } Content { ) ) NumRest Int          | 3) ) { console(i) } #end $                           | Int -> 3                                 |
-| $ #end StatementList } Content { ) ) NumRest 3            | 3) ) { console(i) } #end $                           | Emparejar(3)                             |
-| $ #end StatementList } Content { ) ) NumRest              | ) ) { console(i) } #end $                            | NumRest -> λ                             |
-| $ #end StatementList } Content { )                        | ) { console(i) } #end $                              | Emparejar())                             |
-| $ #end StatementList } Content {                          | { console(i) } #end $                                | Emparejar({)                             |
-| $ #end StatementList } Content                            | console(i) } #end $                                  | Content -> StatementList                 |
-| $ #end StatementList } StatementList                      | console(i) } #end $                                  | StatementList -> Statement StatementList |
-| $ #end StatementList } StatementList Statement            | console(i) } #end $                                  | Content -> StatementList                 |
-| $ #end StatementList } StatementList StatementList        | console(i) } #end $                                  | Statement -> ContentNoReturn             |
-| $ #end StatementList } StatementList ContentNoReturn      | console(i) } #end $                                  | ContentNoReturn -> Console               |
-| $ #end StatementList } StatementList Console              | console(i) } #end $                                  | Console -> console(Args)                 |
-| $ #end StatementList } StatementList ) Args ( console     | console(i) } #end $                                  | Emparejar(console)                       |
-| $ #end StatementList } StatementList ) Args (             | (i) } #end $                                         | Emparejar(()                             |
-| $ #end StatementList } StatementList ) Args               | i) } #end $                                          | Args -> Exp                              |
-| $ #end StatementList } StatementList ) Exp                | i) } #end $                                          | Exp -> Primary_exp                       |
-| $ #end StatementList } StatementList ) Primary_exp        | i) } #end $                                          | Primary_exp -> Id                        |
-| $ #end StatementList } StatementList ) Id                 | i) } #end $                                          | Id -> Letter RestId                      |
-| $ #end StatementList } StatementList ) RestId Letter      | i) } #end $                                          | Letter -> i                              |
-| $ #end StatementList } StatementList ) RestId i           | i) } #end $                                          | Emparejar(i)                             |
-| $ #end StatementList } StatementList ) RestId             | ) } #end $                                            | RestId -> λ                              |
-| $ #end StatementList } StatementList )                    | ) } #end $                                            | Emparejar())                             |
-| $ #end StatementList } StatementList                      | } #end $                                             | StatementList -> λ                       |
-| $ #end StatementList }                                    | } #end $                                             | Emparejar(})                             |
-| $ #end StatementList                                      | #end $                                               | StatementList -> λ                       |
-| $ #end                                                    | #end $                                               | Emparejar(#end)                          |
-| $                                                         | $                                                    | accept                                   |
+| Pila                                                  | Cadena                                               | Regla o Acción                           |
+| ----------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------- |
+| $                                                     | #start loop ( i in range1(3) ) { console(i) } #end $ | Prog -> #start Content #end              |
+| $ #end Content #start                                 | #start loop ( i in range1(3) ) { console(i) } #end $ | Emparejar(#start)                        |
+| $ #end Content                                        | loop ( i in range1(3) ) { console(i) } #end $        | Content -> StatementList                 |
+| $ #end StatementList                                  | loop ( i in range1(3) ) { console(i) } #end $        | StatementList -> Statement StatementList |
+| $ #end StatementList Statement                        | loop ( i in range1(3) ) { console(i) } #end $        | Statement -> ContentNoReturn             |
+| $ #end StatementList ContentNoReturn                  | loop ( i in range1(3) ) { console(i) } #end $        | ContentNoReturn -> Loop                  |
+| $ #end StatementList Loop                             | loop ( i in range1(3) ) { console(i) } #end $        | Loop -> loop ( Id in Range ) Block       |
+| $ #end StatementList Block ) Range in Id ( loop       | loop ( i in range1(3) ) { console(i) } #end $        | Emparejar(loop)                          |
+| $ #end StatementList Block ) Range in Id (            | (i in range1(3) ) { console(i) } #end $              | Emparejar(()                             |
+| $ #end StatementList Block ) Range in Id              | i in range1(3) ) { console(i) } #end $               | Id -> Letter RestId                      |
+| $ #end StatementList Block ) Range in RestId Letter   | i in range1(3) ) { console(i) } #end $               | Letter -> i                              |
+| $ #end StatementList Block ) Range in RestId i        | i in range1(3) ) { console(i) } #end $               | Emparejar(i)                             |
+| $ #end StatementList Block ) Range in RestId          | in range1(3) ) { console(i) } #end $                 | RestId -> λ                              |
+| $ #end StatementList Block ) Range in                 | in range1(3) ) { console(i) } #end $                 | Emparejar(in)                            |
+| $ #end StatementList Block ) Range                    | range1(3) ) { console(i) } #end $                    | Range -> range1(Exp)                     |
+| $ #end StatementList Block ) ) Exp ( range1           | range1(3) ) { console(i) } #end $                    | Emparejar(range1)                        |
+| $ #end StatementList Block ) ) Exp (                  | (3) ) { console(i) } #end $                          | Emparejar(()                             |
+| $ #end StatementList Block ) ) Exp                    | 3) ) { console(i) } #end $                           | Exp -> Primary_exp                       |
+| $ #end StatementList Block ) ) Primary_exp            | 3) ) { console(i) } #end $                           | Primary_exp -> Primitive                 |
+| $ #end StatementList Block ) ) Primitive              | 3) ) { console(i) } #end $                           | Primitive -> Number                      |
+| $ #end StatementList Block ) ) Number                 | 3) ) { console(i) } #end $                           | Number -> NumberContent                  |
+| $ #end StatementList Block ) ) NumberContent          | 3) ) { console(i) } #end $                           | NumberContent -> Int NumRest             |
+| $ #end StatementList Block ) ) NumRest Int            | 3) ) { console(i) } #end $                           | Int -> 3                                 |
+| $ #end StatementList Block ) ) NumRest 3              | 3) ) { console(i) } #end $                           | Emparejar(3)                             |
+| $ #end StatementList Block ) ) NumRest                | ) ) { console(i) } #end $                            | NumRest -> λ                             |
+| $ #end StatementList Block )                          | ) { console(i) } #end $                              | Emparejar())                             |
+| $ #end StatementList Block                            | { console(i) } #end $                                | Block -> { Content }                     |
+| $ #end StatementList } Content {                      | { console(i) } #end $                                | Emparejar({)                             |
+| $ #end StatementList } Content                        | console(i) } #end $                                  | Content -> StatementList                 |
+| $ #end StatementList } StatementList                  | console(i) } #end $                                  | StatementList -> Statement StatementList |
+| $ #end StatementList } StatementList Statement        | console(i) } #end $                                  | Content -> StatementList                 |
+| $ #end StatementList } StatementList StatementList    | console(i) } #end $                                  | Statement -> ContentNoReturn             |
+| $ #end StatementList } StatementList ContentNoReturn  | console(i) } #end $                                  | ContentNoReturn -> Console               |
+| $ #end StatementList } StatementList Console          | console(i) } #end $                                  | Console -> console(Args)                 |
+| $ #end StatementList } StatementList ) Args ( console | console(i) } #end $                                  | Emparejar(console)                       |
+| $ #end StatementList } StatementList ) Args (         | (i) } #end $                                         | Emparejar(()                             |
+| $ #end StatementList } StatementList ) Args           | i) } #end $                                          | Args -> Exp                              |
+| $ #end StatementList } StatementList ) Exp            | i) } #end $                                          | Exp -> Primary_exp                       |
+| $ #end StatementList } StatementList ) Primary_exp    | i) } #end $                                          | Primary_exp -> Id                        |
+| $ #end StatementList } StatementList ) Id             | i) } #end $                                          | Id -> Letter RestId                      |
+| $ #end StatementList } StatementList ) RestId Letter  | i) } #end $                                          | Letter -> i                              |
+| $ #end StatementList } StatementList ) RestId i       | i) } #end $                                          | Emparejar(i)                             |
+| $ #end StatementList } StatementList ) RestId         | ) } #end $                                           | RestId -> λ                              |
+| $ #end StatementList } StatementList )                | ) } #end $                                           | Emparejar())                             |
+| $ #end StatementList } StatementList                  | } #end $                                             | StatementList -> λ                       |
+| $ #end StatementList }                                | } #end $                                             | Emparejar(})                             |
+| $ #end StatementList                                  | #end $                                               | StatementList -> λ                       |
+| $ #end                                                | #end $                                               | Emparejar(#end)                          |
+| $                                                     | $                                                    | accept                                   |
 
 # TP 6
 
@@ -810,10 +815,10 @@ Out -> out
 | Z#start loop ( Id in Range ) {                   | console(i) } #end                                 | shift                     |
 | Z#start loop ( Id in Range ) { console           | (i) } #end                                        | shift                     |
 | Z#start loop ( Id in Range ) { console(          | i) } #end                                         | shift                     |
-| Z#start loop ( Id in Range ) { console(Letter    | ) } #end                                           | reduce                    |
-| Z#start loop ( Id in Range ) { console(Id        | ) } #end                                           | reduce                    |
-| Z#start loop ( Id in Range ) { console(Exp       | ) } #end                                           | reduce                    |
-| Z#start loop ( Id in Range ) { console(Args      | ) } #end                                           | reduce                    |
+| Z#start loop ( Id in Range ) { console(Letter    | ) } #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Id        | ) } #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Exp       | ) } #end                                          | reduce                    |
+| Z#start loop ( Id in Range ) { console(Args      | ) } #end                                          | reduce                    |
 | Z#start loop ( Id in Range ) { console(Args)     | #end                                              | shift                     |
 | Z#start loop ( Id in Range ) { Console           | #end                                              | reduce                    |
 | Z#start loop ( Id in Range ) { Content_no_return | #end                                              | reduce                    |
