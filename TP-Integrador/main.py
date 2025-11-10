@@ -3,6 +3,7 @@ import sys
 from scanner.scanner import lexer
 from parser.parser import parser
 from interpreter import Interpreter
+
 # from utils.helpers import parse_json # Unused import
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -16,8 +17,6 @@ def run_test(name, code):
     lexer.input(full_code)
     try:
         result = parser.parse(full_code, lexer=lexer)
-        print("AST:", result)
-
         # Si el AST es None, la interpretación fallará.
         if result:
             interpreter = Interpreter()
@@ -28,7 +27,9 @@ def run_test(name, code):
         if name == "ERRORS":
             print("Prueba exitosa: Se capturó un error de sintaxis como se esperaba.")
         else:
-            print(f"Error: Se encontró un error de sintaxis inesperado en la prueba '{name}'.")
+            print(
+                f"Error: Se encontró un error de sintaxis inesperado en la prueba '{name}'."
+            )
     print(f"--- Finished test: {name} ---\n")
 
 
@@ -135,15 +136,16 @@ def test_if_else():
     console(!true)
     """
     run_test("If/Else", code)
-    
+
+
 def test_sintaxis_error():
     codes = {
         "Mala declaracion": "[num x: 10]",
-        "error de asignacion" :"str x: <=",
+        "error de asignacion": "str x: <=",
         "error de for": 'for (x > 0) { result: "true" } else { result: "falso" }',
         "error en parentesis console": "console)()",
-        "error en expresion": "+ 10", 
-        "error en id": "if",   
+        "error en expresion": "+ 10",
+        "error en id": "if",
     }
     for i, code in codes.items():
         run_test(i, code)
@@ -156,7 +158,7 @@ def main():
     test_list()
     test_list_actions()
     test_if_else()
-    
+
     print(f"--- Manehjo de Errores ---\n")
     test_sintaxis_error()
     # code = """
