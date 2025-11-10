@@ -695,29 +695,29 @@ Out -> out
 
 | No terminal         | #start | #end  | loop  | console |  out  | range1 | range2 | range3 |   0   |   3   |   -   | outE  |   a   |   i   |   (   |   )   |   ,   |   {   |   }   |  in   |
 | ------------------- | :----: | :---: | :---: | :-----: | :---: | :----: | :----: | :----: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Prog**            |   1    | synch | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | error | error |
-| **Content**         | error  |   4   |   2   |    2    |   2   | error  | error  | error  |   2   |   2   |   2   |   2   |   2   |   2   |   2   | error | error | error | synch | error |
+| **Prog**            |   1    | error | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | error | error |
+| **Content**         | error  |   4   |   2   |    2    |   2   | error  | error  | error  |   2   |   2   |   2   |   2   |   2   |   2   |   2   | error | error | error | error | error |
 | **StatementList**   | error  |   4   |   3   |    3    |   3   | error  | error  | error  |   3   |   3   |   3   |   3   |   3   |   3   |   3   | error | error | error |   4   | error |
-| **Statement**       | error  | synch |   5   |    5    |   5   | error  | error  | error  |   6   |   6   |   6   |   6   |   6   |   6   |   6   | synch | synch | error | synch | error |
-| **ContentNoReturn** | error  | synch |   7   |    8    |   9   | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | synch | error |
+| **Statement**       | error  | error |   5   |    5    |   5   | error  | error  | error  |   6   |   6   |   6   |   6   |   6   |   6   |   6   | error | error | error | error | error |
+| **ContentNoReturn** | error  | error |   7   |    8    |   9   | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | error | error |
 | **Console**         | error  | error | error |   10    | error | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | error | error |
 | **Loop**            | error  | error |  11   |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error | error | error | error | error |
-| **Range**           | error  | error | error |  error  | error |   12   |   13   |   14   | error | error | error | error | error | error | error | synch | error | error | error | error |
-| **Exp**             | error  | synch | error |  error  | error | error  | error  | error  |  15   |  15   |  15   |  15   |  15   |  15   |  15   | synch | synch | error | synch | error |
-| **Primary_exp**     | error  | synch | error |  error  | error | error  | error  | error  |  16   |  16   |  16   |  16   |  17   |  17   |  18   | synch | synch | error | synch | error |
-| **Primitive**       | error  | synch | error |  error  | error | error  | error  | error  |  22   |  22   |  22   |  23   | error | error | error | error | error | error | synch | error |
-| **Args**            | error  | synch | error |  error  | error | error  | error  | error  |  19   |  19   |  19   |  19   |  19   |  19   |  19   | synch | error | error | synch | error |
-| **ArgsRest**        | error  | synch | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error |  20   | error |  21   | error |
-| **Block**           | error  |  38   | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error | error |  38   | synch | error |
-| **Id**              | error  | synch | error |  error  | error | error  | error  | error  | error | error | error | error |  29   |  29   | error | synch | synch | error | synch | error |
+| **Range**           | error  | error | error |  error  | error |   12   |   13   |   14   | error | error | error | error | error | error | error | error | error | error | error | error |
+| **Exp**             | error  | error | error |  error  | error | error  | error  | error  |  15   |  15   |  15   |  15   |  15   |  15   |  15   | error | error | error | error | error |
+| **Primary_exp**     | error  | error | error |  error  | error | error  | error  | error  |  16   |  16   |  16   |  16   |  17   |  17   |  18   | error | error | error | error | error |
+| **Primitive**       | error  | error | error |  error  | error | error  | error  | error  |  22   |  22   |  22   |  23   | error | error | error | error | error | error | error | error |
+| **Args**            | error  | error | error |  error  | error | error  | error  | error  |  19   |  19   |  19   |  19   |  19   |  19   |  19   | error | error | error | error | error |
+| **ArgsRest**        | error  | error | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error |  20   | error |  21   | error |
+| **Block**           | error  |  38   | error |  error  | error | error  | error  | error  | error | error | error | error | error | error | error | error | error |  38   | error | error |
+| **Id**              | error  | error | error |  error  | error | error  | error  | error  | error | error | error | error |  29   |  29   | error | error | error | error | error | error |
 | **RestId**          | error  |  31   | error |  error  | error | error  | error  | error  | error | error | error | error |  30   |  30   | error |  31   |  31   | error |  31   |  31   |
-| **Letter**          | error  | synch | error |  error  | error | error  | error  | error  | error | error | error | error |  32   |  33   | error | synch | synch | error | synch | error |
-| **Number**          | error  | synch | error |  error  | error | error  | error  | error  |  24   |  24   |  25   | error | error | error | error | synch | synch | error | synch | error |
-| **NumberContent**   | error  | synch | error |  error  | error | error  | error  | error  |  26   |  26   | error | error | error | error | error |  28   |  28   | error |  28   | error |
+| **Letter**          | error  | error | error |  error  | error | error  | error  | error  | error | error | error | error |  32   |  33   | error | error | error | error | error | error |
+| **Number**          | error  | error | error |  error  | error | error  | error  | error  |  24   |  24   |  25   | error | error | error | error | error | error | error | error | error |
+| **NumberContent**   | error  | error | error |  error  | error | error  | error  | error  |  26   |  26   | error | error | error | error | error |  28   |  28   | error |  28   | error |
 | **NumRest**         | error  |  28   | error |  error  | error | error  | error  | error  |  27   |  27   | error | error | error | error | error |  28   |  28   | error |  28   | error |
 | **Int**             | error  | sync  | error |  error  | error | error  | error  | error  |  34   |  35   | error | error | error | error | error |  28   |  28   | error |  28   | error |
-| **OutE**            | error  | synch | error |  error  | error | error  | error  | error  | error | error | error |  36   | error | error | error |  36   |  36   | error |  36   | error |
-| **Out**             | error  | synch | error |  error  |  37   | error  | error  | error  | error | error | error | error | error | error | error |  37   |  37   | error |  37   | error |
+| **OutE**            | error  | error | error |  error  | error | error  | error  | error  | error | error | error |  36   | error | error | error |  36   |  36   | error |  36   | error |
+| **Out**             | error  | error | error |  error  |  37   | error  | error  | error  | error | error | error | error | error | error | error |  37   |  37   | error |  37   | error |
 
 # Predicción de ASDP LL(1)
 
