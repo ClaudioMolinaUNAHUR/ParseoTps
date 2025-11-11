@@ -32,7 +32,7 @@ class VarNode(Node):
 
     def execute(self, symbol_table):
         value = self.value_expr.execute(symbol_table)
-        symbol_table.set(self.name, value)
+        symbol_table.agregar(self.name, value)
 
 
 class AssignNode(Node):
@@ -42,7 +42,7 @@ class AssignNode(Node):
 
     def execute(self, symbol_table):
         value = self.value_expr.execute(symbol_table)
-        symbol_table.update(self.name, value)
+        symbol_table.actualizar(self.name, value)
 
 
 class BinaryOpNode(Node):
@@ -109,7 +109,7 @@ class IdNode(Node):
         self.name = name
 
     def execute(self, symbol_table):
-        return symbol_table.get(self.name)
+        return symbol_table.obtener(self.name)
 
 
 class ListNode(Node):
@@ -136,14 +136,14 @@ class FunctionNode(Node):
         self.body = body
 
     def execute(self, symbol_table):
-        symbol_table.set(self.name, self)
+        symbol_table.agregar(self.name, self)
 
     def execute_body(self, args, symbol_table):
         symbol_table.enter_scope()
         try:
             for i, param_def in enumerate(self.params):
                 param_name = param_def.name
-                symbol_table.set(param_name, args[i])
+                symbol_table.agregar(param_name, args[i])
             for statement in self.body:
                 statement.execute(symbol_table)
         finally:
@@ -162,7 +162,7 @@ class FunctionReturnNode(FunctionNode):
         try:
             for i, param_def in enumerate(self.params):
                 param_name = param_def.name
-                symbol_table.set(param_name, args[i])
+                symbol_table.agregar(param_name, args[i])
 
             for statement in self.body:
                 statement.execute(symbol_table)
@@ -180,7 +180,7 @@ class ParamNode(Node):
         self.default_value = default_value
 
     def execute(self, symbol_table):
-        # Params don't execute directly, they are used by function nodes
+        # Los parámetros no se ejecutan directamente, son utilizados por los nodos de función
         pass
 
 
@@ -190,7 +190,7 @@ class CallFuncNode(Node):
         self.args = args
 
     def execute(self, symbol_table):
-        func_def = symbol_table.get(self.name)
+        func_def = symbol_table.obtener(self.name)
         evaluated_args = [arg.execute(symbol_table) for arg in self.args]
         return func_def.execute_body(evaluated_args, symbol_table)
 
@@ -218,7 +218,7 @@ class LoopNode(Node):
         start, end = self.range_node.execute(symbol_table)
         for i in range(int(start), int(end)):
             symbol_table.enter_scope()
-            symbol_table.set(self.var_name, i)
+            symbol_table.agregar(self.var_name, i)
             self.body.execute(symbol_table)
             symbol_table.exit_scope()
 
@@ -227,7 +227,7 @@ class RangeNode(Node):
     def __init__(self, start, end=None, step=None):
         self.start = start
         self.end = end
-        self.step = step  # Note: step is not used in the original interpreter
+        self.step = step 
 
     def execute(self, symbol_table):
         start_val = self.start.execute(symbol_table)

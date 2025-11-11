@@ -1,33 +1,33 @@
 class SymbolTable:
     """
-    Manages scopes and symbols (variables, functions).
+    Esta clase representa la tabla de simbolos
     """
 
     def __init__(self):
-        self.scopes = [{}]  # Start with a global scope.
+        self.scopes = [{}]  # Comienza con un ámbito global.
 
     def enter_scope(self):
-        """Enters a new scope (e.g., when calling a function or entering a loop)."""
+        """Entra en un nuevo ámbito (por ejemplo, al llamar a una función o entrar en un bucle)."""
         self.scopes.append({})
 
     def exit_scope(self):
-        """Exits the current scope."""
+        """Sale del ámbito actual."""
         if len(self.scopes) > 1:
             self.scopes.pop()
 
-    def set(self, name, value):
-        """Sets a variable in the current (innermost) scope."""
+    def agregar(self, name, value):
+        """Establece una variable en el ámbito actual (el más interno)."""
         self.scopes[-1][name] = value
 
-    def get(self, name):
-        """Gets a variable, searching from the innermost scope to the outermost."""
+    def obtener(self, name):
+        """Obtiene una variable, buscando desde el ámbito más interno hasta el más externo."""
         for scope in reversed(self.scopes):
             if name in scope:
                 return scope[name]
         raise NameError(f"Name '{name}' is not defined.")
 
-    def update(self, name, value):
-        """Updates an existing variable in the nearest scope where it is found."""
+    def actualizar(self, name, value):
+        """Actualiza una variable existente en el ámbito más cercano donde se encuentra."""
         for scope in reversed(self.scopes):
             if name in scope:
                 scope[name] = value
@@ -37,16 +37,16 @@ class SymbolTable:
 
 class Interpreter:
     """
-    The interpreter traverses the AST produced by the parser and executes it.
-    It uses a SymbolTable to manage variables and function scopes.
-    The execution logic is delegated to the `execute` method of each AST node.
+    El intérprete recorre el AST producido por el analizador sintáctico y lo ejecuta.
+    Utiliza una SymbolTable para gestionar las variables y los ámbitos de las funciones.
+    La lógica de ejecución se delega en el método `execute` de cada nodo del AST.
     """
 
     def __init__(self):
         self.symbol_table = SymbolTable()
 
     def execute(self, node):
-        """Public method to start interpretation."""
+        """Método público para iniciar la interpretación."""
         if node:
             return node.execute(self.symbol_table)
         return None

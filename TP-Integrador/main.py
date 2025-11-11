@@ -4,13 +4,11 @@ from scanner.scanner import lexer
 from parser.parser import parser
 from interpreter import Interpreter
 
-# from utils.helpers import parse_json # Unused import
-
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 def run_test(name, code):
-    print(f"--- Running test: {name} ---")
+    print(f"--- Ejecutando prueba: {name} ---")
 
     full_code = f"#start\n{code}\n#end"
 
@@ -30,11 +28,11 @@ def run_test(name, code):
             print(
                 f"Error: Se encontró un error de sintaxis inesperado en la prueba '{name}'."
             )
-    print(f"--- Finished test: {name} ---\n")
+    print(f"--- Prueba finalizada: {name} ---\n")
 
 
 def test_main_program():
-    """Tests the main example program."""
+    """Prueba el programa de ejemplo principal."""
     code = """
     list<str> productos: []
     list<num> precios: []
@@ -74,7 +72,7 @@ def test_main_program():
         console("comprando item" + i)
     }
     """
-    run_test("Main Program", code)
+    run_test("Programa Principal", code)
 
 
 def test_loop():
@@ -83,7 +81,7 @@ def test_loop():
         console("x" + i) 
     }
     """
-    run_test("Loop", code)
+    run_test("Bucle", code)
 
 
 def test_var_primitive():
@@ -97,7 +95,7 @@ def test_var_primitive():
     z: false     
     console(x, y, z)
     """
-    run_test("Variables and Primitives", code)
+    run_test("Variables y Primitivas", code)
 
 
 def test_list():
@@ -111,7 +109,7 @@ def test_list():
     listaC[2]: false
     console(listaA, listaB, listaC)
     """
-    run_test("List", code)
+    run_test("Lista", code)
 
 
 def test_list_actions():
@@ -122,7 +120,7 @@ def test_list_actions():
     remove(lista)
     console(size(lista), lista)
     """
-    run_test("List Actions", code)
+    run_test("Acciones de Lista", code)
 
 
 def test_if_else():
@@ -159,7 +157,7 @@ def main():
     test_list_actions()
     test_if_else()
 
-    print(f"--- Manehjo de Errores ---\n")
+    print(f"--- Manejo de Errores ---\n")
     test_sintaxis_error()
     # code = """
     # num x: 10
