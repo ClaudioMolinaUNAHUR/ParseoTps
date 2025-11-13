@@ -4,8 +4,10 @@ from scanner.scanner import lexer
 from parser.parser import parser
 from interpreter import Interpreter
 from utils.helpers import to_json
+from test import *
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 
 def run_test(name, code):
     print(f"--- Ejecutando prueba: {name} ---")
@@ -18,7 +20,7 @@ def run_test(name, code):
         print("AST generado")
         print(to_json(result))
         print("FIN AST")
-        # Si el AST es None, la interpretación fallará.
+        # Si el AST es None, la interpretación falla
         if result:
             interpreter = Interpreter()
             interpreter.execute(result)
@@ -34,140 +36,33 @@ def run_test(name, code):
     print(f"--- Prueba finalizada: {name} ---\n")
 
 
-def test_main_program():
-    """Prueba el programa de ejemplo principal."""
-    code = """
-    list<str> productos: []
-    list<num> precios: []
-    list<bool> comprado: []
-
-    // funcion de agregar un producto al carrito con precio determinado -/
-    func agregar(str nombre, num precio) {
-        add(productos, nombre)
-        add(precios, precio)
-        add(comprado, false)
-    }
-
-    // Se agregan 2 productos al carrito -/
-    agregar("Pan", 120)
-    agregar("Leche", 250)
-
-    // funcion para realizar la compra de 1 producto -/
-    func comprar(num indice) {
-        comprado[indice]: true
-    }
-
-    comprar(0)   // Marca Pan como comprado -/
-
-    func total(): num {
-        num suma: 0
-        loop(i in range(0, size(precios))) {
-            suma: suma + precios[i]
-        }
-        return suma
-    }
-
-    console(total()) // Mostrar precio Total -/
-
-    // comprar todos los productos -/
-    loop(i in range(0, size(precios))) {
-        comprar(i)
-        console("comprando item" + i)
-    }
-    """
-    run_test("Programa Principal", code)
-
-
-def test_loop():
-    code = """
-    loop(i in range(0, 5, 2)) { 
-        console("x" + i) 
-    }
-    """
-    run_test("Bucle", code)
-
-
-def test_var_primitive():
-    code = """
-    num x: 1
-    str y: "hola"
-    bool z: true
-    
-    x: x + 1
-    y: y + " mundo"
-    z: false     
-    console(x, y, z)
-    """
-    run_test("Variables y Primitivas", code)
-
-
-def test_list():
-    code = """    
-    list<num> listaA: [1, 2, 3, 4, 5]
-    list<str> listaB: ["a", "b", "c", "d", "e"]
-    list<bool> listaC: [true, true, false, true, false]
-    
-    listaA[0]: 10
-    listaB[1]: "z"
-    listaC[2]: false
-    console(listaA, listaB, listaC)
-    """
-    run_test("Lista", code)
-
-
-def test_list_actions():
-    code = """    
-    list<num> lista: [1, 2, 3, 4, 5]
-    
-    add(lista, 6)
-    remove(lista)
-    console(size(lista), lista)
-    """
-    run_test("Acciones de Lista", code)
-
-
-def test_if_else():
-    code = """
-    num x: 10
-    str result: ""
-    if (x > 0) { result: "true" } else { result: "falso" }
-    console(result)
-    if (x == 0) { result: "verdadero" } else {result:  "falso" }
-    console(result)
-    console(!true)
-    """
-    run_test("If/Else", code)
-
-
-def test_sintaxis_error():
-    codes = {
-        "Mala declaracion": "[num x: 10]",
-        "error de asignacion": "str x: <=",
-        "error de for": 'for (x > 0) { result: "true" } else { result: "falso" }',
-        "error en parentesis console": "console)()",
-        "error en expresion": "+ 10",
-        "error en id": "if",
-    }
-    for i, code in codes.items():
-        run_test(i, code)
-
-
 def main():
-    test_main_program()
-    test_loop()
-    test_var_primitive()
-    test_list()
-    test_list_actions()
-    test_if_else()
+    tests = [
+        test_simple,
+        test_main_program,
+        test_loop,
+        test_var_primitive,
+        test_list,
+        test_list_actions,
+        test_if_else,
+    ]
+    for test in tests:
+        tuple = test()
+        if tuple is None:
+            continue
+        name = tuple[0]
+        code = tuple[1]
+        run_test(name, code)
 
     print(f"--- Manejo de Errores ---\n")
-    test_sintaxis_error()
-    # code = """
-    # num x: 10
-    # 2 + x
-    # console(x)
-    # """
-    # run_test("simple", code)
+
+    err_tests = test_sintaxis_error()
+    for err_test in err_tests:
+        if err_test is None:
+            continue
+        name = err_test[0]
+        code = err_test[1]
+        run_test(name, code)
 
 
 if __name__ == "__main__":
