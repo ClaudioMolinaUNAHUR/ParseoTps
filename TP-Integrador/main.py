@@ -15,9 +15,16 @@ def run_test(name, code):
     full_code = f"#start\n{code}\n#end"
 
     lexer.input(full_code)
+    print(f"--- Imprimir Tokens: {name} ---")
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(tok)
     try:
         result = parser.parse(full_code, lexer=lexer)
         print("AST generado")
+        print(result)
         print(to_json(result))
         print("FIN AST")
         # Si el AST es None, la interpretación falla
