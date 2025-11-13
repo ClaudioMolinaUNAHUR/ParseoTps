@@ -14,6 +14,9 @@ class Node:
             f"Método execute no implementado para {self.__class__.__name__}"
         )
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}>"
+
 
 class RootNode(Node):
     def __init__(self, statement_list):
@@ -22,6 +25,9 @@ class RootNode(Node):
     def execute(self, symbol_table):
         for statement in self.statement_list:
             statement.execute(symbol_table)
+
+    def __repr__(self):
+        return f"RootNode({self.statement_list!r})"
 
 
 class VarNode(Node):
@@ -34,6 +40,9 @@ class VarNode(Node):
         value = self.value_expr.execute(symbol_table)
         symbol_table.agregar(self.name, value)
 
+    def __repr__(self):
+        return f"VarNode(type={self.var_type!r}, name={self.name!r}, value={self.value_expr!r})"
+
 
 class AssignNode(Node):
     def __init__(self, name, value_expr):
@@ -43,6 +52,9 @@ class AssignNode(Node):
     def execute(self, symbol_table):
         value = self.value_expr.execute(symbol_table)
         symbol_table.actualizar(self.name, value)
+
+    def __repr__(self):
+        return f"AssignNode(name={self.name!r}, value={self.value_expr!r})"
 
 
 class BinaryOpNode(Node):
@@ -83,6 +95,9 @@ class BinaryOpNode(Node):
             return left_val or right_val
         raise TypeError(f"Operador binario no soportado: {self.op}")
 
+    def __repr__(self):
+        return f"BinaryOpNode({self.left!r} {self.op} {self.right!r})"
+
 
 class UnaryOpNode(Node):
     def __init__(self, op, expr):
@@ -95,6 +110,9 @@ class UnaryOpNode(Node):
             return not value
         raise TypeError(f"Operador unario no soportado: {self.op}")
 
+    def __repr__(self):
+        return f"UnaryOpNode(op={self.op!r}, expr={self.expr!r})"
+
 
 class PrimitiveNode(Node):
     def __init__(self, value):
@@ -102,6 +120,9 @@ class PrimitiveNode(Node):
 
     def execute(self, symbol_table):
         return self.value
+
+    def __repr__(self):
+        return f"PrimitiveNode({self.value!r})"
 
 
 class IdNode(Node):
@@ -111,6 +132,9 @@ class IdNode(Node):
     def execute(self, symbol_table):
         return symbol_table.obtener(self.name)
 
+    def __repr__(self):
+        return f"IdNode({self.name!r})"
+
 
 class ListNode(Node):
     def __init__(self, items):
@@ -118,6 +142,9 @@ class ListNode(Node):
 
     def execute(self, symbol_table):
         return [item.execute(symbol_table) for item in self.items]
+
+    def __repr__(self):
+        return f"ListNode({self.items!r})"
 
 
 class ConsoleNode(Node):
@@ -127,6 +154,9 @@ class ConsoleNode(Node):
     def execute(self, symbol_table):
         evaluated_args = [arg.execute(symbol_table) for arg in self.args]
         print(*evaluated_args)
+
+    def __repr__(self):
+        return f"ConsoleNode({self.args!r})"
 
 
 class FunctionNode(Node):
@@ -148,6 +178,9 @@ class FunctionNode(Node):
                 statement.execute(symbol_table)
         finally:
             symbol_table.exit_scope()
+
+    def __repr__(self):
+        return f"FunctionNode(name={self.name!r}, params={self.params!r}, body={self.body!r})"
 
 
 class FunctionReturnNode(FunctionNode):
@@ -172,6 +205,9 @@ class FunctionReturnNode(FunctionNode):
             symbol_table.exit_scope()
         return return_value
 
+    def __repr__(self):
+        return f"FunctionReturnNode(name={self.name!r}, params={self.params!r}, return_type={self.return_type!r}, body={self.body!r}, return_expr={self.return_expr!r})"
+
 
 class ParamNode(Node):
     def __init__(self, param_type, name, default_value=None):
@@ -183,6 +219,9 @@ class ParamNode(Node):
         # Los parámetros no se ejecutan directamente, son utilizados por los nodos de función
         pass
 
+    def __repr__(self):
+        return f"ParamNode(type={self.param_type!r}, name={self.name!r}, default={self.default_value!r})"
+
 
 class CallFuncNode(Node):
     def __init__(self, name, args):
@@ -193,6 +232,9 @@ class CallFuncNode(Node):
         func_def = symbol_table.obtener(self.name)
         evaluated_args = [arg.execute(symbol_table) for arg in self.args]
         return func_def.execute_body(evaluated_args, symbol_table)
+
+    def __repr__(self):
+        return f"CallFuncNode(name={self.name!r}, args={self.args!r})"
 
 
 class ConditionalNode(Node):
@@ -206,6 +248,9 @@ class ConditionalNode(Node):
             self.if_block.execute(symbol_table)
         elif self.else_block:
             self.else_block.execute(symbol_table)
+
+    def __repr__(self):
+        return f"ConditionalNode(condition={self.condition!r}, if_block={self.if_block!r}, else_block={self.else_block!r})"
 
 
 class LoopNode(Node):
@@ -222,12 +267,15 @@ class LoopNode(Node):
             self.body.execute(symbol_table)
             symbol_table.exit_scope()
 
+    def __repr__(self):
+        return f"LoopNode(var={self.var_name!r}, range={self.range_node!r}, body={self.body!r})"
+
 
 class RangeNode(Node):
     def __init__(self, start, end=None, step=None):
         self.start = start
         self.end = end
-        self.step = step 
+        self.step = step
 
     def execute(self, symbol_table):
         start_val = self.start.execute(symbol_table)
@@ -236,6 +284,9 @@ class RangeNode(Node):
             return 0, start_val, step_val
         end_val = self.end.execute(symbol_table)
         return start_val, end_val, step_val
+
+    def __repr__(self):
+        return f"RangeNode(start={self.start!r}, end={self.end!r}, step={self.step!r})"
 
 
 class ReadListItemNode(Node):
@@ -247,6 +298,9 @@ class ReadListItemNode(Node):
         the_list = self.list_node.execute(symbol_table)
         index = self.index_expr.execute(symbol_table)
         return the_list[index]
+
+    def __repr__(self):
+        return f"ReadListItemNode(list={self.list_node!r}, index={self.index_expr!r})"
 
 
 class ListAssignNode(Node):
@@ -261,6 +315,9 @@ class ListAssignNode(Node):
         value = self.value_expr.execute(symbol_table)
         the_list[index] = value
 
+    def __repr__(self):
+        return f"ListAssignNode(list={self.list_node!r}, index={self.index_expr!r}, value={self.value_expr!r})"
+
 
 class AddListItemNode(Node):
     def __init__(self, list_expr, value_expr):
@@ -272,6 +329,9 @@ class AddListItemNode(Node):
         value = self.value_expr.execute(symbol_table)
         the_list.append(value)
 
+    def __repr__(self):
+        return f"AddListItemNode(list={self.list_expr!r}, value={self.value_expr!r})"
+
 
 class RemoveListItemNode(Node):
     def __init__(self, list_expr):
@@ -282,6 +342,9 @@ class RemoveListItemNode(Node):
         if len(the_list) > 0:
             the_list.pop()
 
+    def __repr__(self):
+        return f"RemoveListItemNode(list={self.list_expr!r})"
+
 
 class LenListItemNode(Node):
     def __init__(self, list_node):
@@ -290,6 +353,9 @@ class LenListItemNode(Node):
     def execute(self, symbol_table):
         list_val = self.list_node.execute(symbol_table)
         return len(list_val)
+
+    def __repr__(self):
+        return f"LenListItemNode({self.list_node!r})"
 
 
 class HasListItemNode(Node):
@@ -301,3 +367,6 @@ class HasListItemNode(Node):
         the_list = self.list_expr.execute(symbol_table)
         value = self.value_expr.execute(symbol_table)
         return value in the_list
+
+    def __repr__(self):
+        return f"HasListItemNode(list={self.list_expr!r}, value={self.value_expr!r})"

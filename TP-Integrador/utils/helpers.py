@@ -1,3 +1,9 @@
 import json
-def parse_json(data):
-    return json.dumps(data, indent=2, ensure_ascii=False)
+
+def to_json(data):
+    return json.dumps(
+        data,
+        default=lambda o: o.__dict__,
+        indent=2,
+        ensure_ascii=False,
+    )

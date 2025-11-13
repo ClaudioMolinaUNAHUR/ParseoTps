@@ -3,9 +3,9 @@ import sys
 from scanner.scanner import lexer
 from parser.parser import parser
 from interpreter import Interpreter
+from utils.helpers import to_json
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
 
 def run_test(name, code):
     print(f"--- Ejecutando prueba: {name} ---")
@@ -15,6 +15,9 @@ def run_test(name, code):
     lexer.input(full_code)
     try:
         result = parser.parse(full_code, lexer=lexer)
+        print("AST generado")
+        print(to_json(result))
+        print("FIN AST")
         # Si el AST es None, la interpretación fallará.
         if result:
             interpreter = Interpreter()
