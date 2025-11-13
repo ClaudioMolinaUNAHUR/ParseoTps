@@ -159,7 +159,7 @@ f(10, 20)
                 | if ( <exp> ) { <content> } else <conditional>
 
 <loop> ::= loop ( <id> in <range> ) { <content> }
-<range> ::= range(<exp>) | range(<exp>, <exp>) | range(<exp>, <exp>, <exp>)
+
 
 <exp> ::= <exp> <operator> <exp>
         | <op_bool_un> <exp>

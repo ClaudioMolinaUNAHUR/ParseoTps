@@ -16,11 +16,11 @@ class Node:
 
 
 class RootNode(Node):
-    def __init__(self, statements):
-        self.statements = statements
+    def __init__(self, statement_list):
+        self.statement_list = statement_list
 
     def execute(self, symbol_table):
-        for statement in self.statements:
+        for statement in self.statement_list:
             statement.execute(symbol_table)
 
 
@@ -215,8 +215,8 @@ class LoopNode(Node):
         self.body = body
 
     def execute(self, symbol_table):
-        start, end = self.range_node.execute(symbol_table)
-        for i in range(int(start), int(end)):
+        start, end, step = self.range_node.execute(symbol_table)
+        for i in range(int(start), int(end), int(step)):
             symbol_table.enter_scope()
             symbol_table.agregar(self.var_name, i)
             self.body.execute(symbol_table)
@@ -231,10 +231,11 @@ class RangeNode(Node):
 
     def execute(self, symbol_table):
         start_val = self.start.execute(symbol_table)
+        step_val = self.step.execute(symbol_table) if self.step else 1
         if self.end is None:
-            return 0, start_val
+            return 0, start_val, step_val
         end_val = self.end.execute(symbol_table)
-        return start_val, end_val
+        return start_val, end_val, step_val
 
 
 class ReadListItemNode(Node):

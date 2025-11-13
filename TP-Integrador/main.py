@@ -77,7 +77,7 @@ def test_main_program():
 
 def test_loop():
     code = """
-    loop(i in range(0, 2, 1)) { 
+    loop(i in range(0, 5, 2)) { 
         console("x" + i) 
     }
     """
